@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Tiempos Verbales</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & vars ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0d0f14; --surface:#13161e; --surface2:#1b1f2c;
+  --gold:#c9a84c; --gold-light:#e8c97a; --gold-dim:#6a5520;
+  --past:#7eb8f7; --present:#a8f0c0; --future:#f7a07e; --russian:#c4aee8;
+  --text:#f0ead8; --text-dim:#605850;
+  --r:9px;
+}
+
+html, body { height:100%; }
+
+body {
+  background:var(--bg); color:var(--text);
+  font-family:'Crimson Pro',Georgia,serif;
+  display:flex; flex-direction:column; align-items:center;
+  padding:28px 14px 48px; overflow-x:hidden; min-height:100%;
+}
+
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background:
+    radial-gradient(ellipse 70% 40% at 16% 50%,rgba(62,100,180,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 70% 40% at 84% 50%,rgba(180,100,60,.07) 0%,transparent 60%),
+    radial-gradient(ellipse 40% 30% at 50% 50%,rgba(201,168,76,.03) 0%,transparent 55%);
+}
+
+.wrapper { position:relative; z-index:1; width:100%; max-width:1380px; }
+
+/* ── Fullscreen button ── */
+#fsBtn {
+  position:fixed; top:14px; right:14px; z-index:9999;
+  width:38px; height:38px; border-radius:8px;
+  background:var(--surface); border:1px solid rgba(255,255,255,.1);
+  color:var(--gold-light); cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:background .2s, box-shadow .2s; padding:0;
+}
+#fsBtn:hover { background:var(--surface2); box-shadow:0 0 16px rgba(201,168,76,.2); }
+#fsBtn svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+
+/* fullscreen mode resets */
+:fullscreen body, :-webkit-full-screen body { padding-top:28px; }
+:fullscreen #fsBtn, :-webkit-full-screen #fsBtn { top:14px; right:14px; }
+
+/* ── Header ── */
+header { text-align:center; margin-bottom:44px; animation:fadeDown .8s ease both; }
+.subtitle { font-size:.7rem; letter-spacing:.35em; color:var(--gold-dim); text-transform:uppercase; margin-bottom:9px; }
+h1 { font-family:'Playfair Display',serif; font-size:clamp(1.6rem,5vw,2.9rem); font-weight:700; color:var(--gold-light); line-height:1.15; }
+h1 em { font-style:italic; color:var(--gold); }
+.header-line { width:60px; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:12px auto 0; }
+
+/* ════════════════════════════════════
+   DESKTOP LAYOUT  (≥ 700px)
+════════════════════════════════════ */
+.desktop-view { width:100%; }
+
+.zone-labels {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  width:100%; margin-bottom:10px; padding:0 2%; gap:6px;
+}
+.zone-label {
+  text-align:center; font-size:.65rem; letter-spacing:.2em;
+  text-transform:uppercase; font-weight:600; padding:5px 6px; border-radius:3px;
+}
+.zone-label.past    { color:var(--past);    background:rgba(126,184,247,.06); }
+.zone-label.now     { color:var(--present); background:rgba(168,240,192,.06); }
+.zone-label.fut     { color:var(--future);  background:rgba(247,160,126,.06); }
+
+.diagram { position:relative; width:100%; padding:90px 0 90px; }
+
+.cards-above, .cards-below {
+  position:absolute; width:100%; left:0;
+  display:flex; align-items:flex-end; justify-content:space-around;
+  padding:0 1%; gap:5px;
+}
+.cards-above { top:0; }
+.cards-below { bottom:0; align-items:flex-start; }
+
+/* Cards shared */
+.card {
+  flex:1; max-width:152px; min-width:82px;
+  background:var(--surface); border-radius:var(--r);
+  padding:10px 9px 9px; text-align:center; cursor:pointer;
+  transition:transform .22s ease, box-shadow .22s ease, border-color .22s ease, background .22s ease;
+  user-select:none; -webkit-tap-highlight-color:transparent;
+  animation:fadeDown .7s ease both;
+}
+.cards-below .card { animation-name:fadeUp; display:flex; flex-direction:column; }
+
+.card.past    { border:1px solid rgba(126,184,247,.18); }
+.card.present { border:1px solid rgba(168,240,192,.22); }
+.card.future  { border:1px solid rgba(247,160,126,.18); }
+
+.card:hover { transform:translateY(-3px); }
+.card.past:hover    { box-shadow:0 10px 26px rgba(62,122,191,.22);  border-color:rgba(126,184,247,.42); }
+.card.present:hover { box-shadow:0 10px 26px rgba(58,184,112,.25);  border-color:rgba(168,240,192,.45); }
+.card.future:hover  { box-shadow:0 10px 26px rgba(192,80,48,.22);   border-color:rgba(247,160,126,.42); }
+
+.card.active { transform:translateY(-5px) scale(1.02); background:var(--surface2); }
+.card.active.past    { border-color:var(--past);    box-shadow:0 0 0 1px var(--past),    0 12px 32px rgba(62,122,191,.38); }
+.card.active.present { border-color:var(--present); box-shadow:0 0 0 1px var(--present), 0 12px 32px rgba(58,184,112,.40); }
+.card.active.future  { border-color:var(--future);  box-shadow:0 0 0 1px var(--future),  0 12px 32px rgba(192,80,48,.38); }
+
+.card-name { font-family:'Playfair Display',serif; font-size:.77rem; font-weight:700; line-height:1.3; margin-bottom:4px; }
+.card.past    .card-name { color:var(--past); }
+.card.present .card-name { color:var(--present); }
+.card.future  .card-name { color:var(--future); }
+
+.card-russian { font-size:.63rem; color:var(--russian); font-style:italic; line-height:1.35; margin-bottom:4px; opacity:.85; }
+.card-example { font-style:italic; font-size:.67rem; color:var(--text-dim); line-height:1.4; }
+
+.card-dot { width:6px; height:6px; border-radius:50%; margin:6px auto 0; }
+.cards-below .card-dot { order:0; margin:0 auto 6px; }
+.cards-below .card-name    { order:1; }
+.cards-below .card-russian { order:2; }
+.cards-below .card-example { order:3; }
+.card.past    .card-dot { background:var(--past); }
+.card.present .card-dot { background:var(--present); }
+.card.future  .card-dot { background:var(--future); }
+
+.timeline-svg { width:100%; height:auto; overflow:visible; display:block; animation:fadeUp .6s ease .1s both; }
+
+/* ════════════════════════════════════
+   MOBILE LAYOUT  (< 700px)
+════════════════════════════════════ */
+.mobile-view { display:none; width:100%; }
+
+/* Mini timeline bar for mobile */
+.mini-timeline-wrap { width:100%; margin-bottom:18px; }
+.mini-svg { width:100%; overflow:visible; display:block; }
+
+/* Zone pills row */
+.mobile-zones {
+  display:grid; grid-template-columns:1fr 1fr 1fr;
+  gap:5px; margin-bottom:12px;
+}
+.mobile-zone {
+  text-align:center; font-size:.58rem; letter-spacing:.15em;
+  text-transform:uppercase; font-weight:600; padding:4px 4px; border-radius:3px;
+}
+.mobile-zone.past    { color:var(--past);    background:rgba(126,184,247,.07); }
+.mobile-zone.now     { color:var(--present); background:rgba(168,240,192,.07); }
+.mobile-zone.fut     { color:var(--future);  background:rgba(247,160,126,.07); }
+
+/* Mobile card grid */
+.mobile-cards {
+  display:flex; flex-direction:column; gap:8px;
+}
+.mobile-section-title {
+  font-size:.58rem; letter-spacing:.28em; text-transform:uppercase;
+  font-weight:600; padding:6px 10px; border-radius:4px; margin-top:4px;
+}
+.mobile-section-title.past-label    { color:var(--past);    background:rgba(126,184,247,.08); }
+.mobile-section-title.present-label { color:var(--present); background:rgba(168,240,192,.08); }
+.mobile-section-title.future-label  { color:var(--future);  background:rgba(247,160,126,.08); }
+
+.mcard {
+  display:flex; align-items:center; gap:10px;
+  background:var(--surface); border-radius:var(--r);
+  padding:10px 12px; cursor:pointer;
+  user-select:none; -webkit-tap-highlight-color:transparent;
+  transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease, background .2s ease;
+  animation:fadeUp .5s ease both;
+}
+.mcard.past    { border:1px solid rgba(126,184,247,.18); }
+.mcard.present { border:1px solid rgba(168,240,192,.22); }
+.mcard.future  { border:1px solid rgba(247,160,126,.18); }
+
+.mcard:active { transform:scale(.98); }
+.mcard.active { background:var(--surface2); }
+.mcard.active.past    { border-color:var(--past);    box-shadow:0 0 0 1px var(--past),    0 6px 22px rgba(62,122,191,.32); }
+.mcard.active.present { border-color:var(--present); box-shadow:0 0 0 1px var(--present), 0 6px 22px rgba(58,184,112,.34); }
+.mcard.active.future  { border-color:var(--future);  box-shadow:0 0 0 1px var(--future),  0 6px 22px rgba(192,80,48,.32); }
+
+.mcard-indicator {
+  width:4px; border-radius:4px; align-self:stretch; flex-shrink:0; min-height:32px;
+}
+.mcard.past    .mcard-indicator { background:var(--past);    opacity:.6; }
+.mcard.present .mcard-indicator { background:var(--present); opacity:.7; }
+.mcard.future  .mcard-indicator { background:var(--future);  opacity:.6; }
+.mcard.active  .mcard-indicator { opacity:1 !important; }
+
+.mcard-body { flex:1; }
+.mcard-name { font-family:'Playfair Display',serif; font-size:.82rem; font-weight:700; line-height:1.25; margin-bottom:2px; }
+.mcard.past    .mcard-name { color:var(--past); }
+.mcard.present .mcard-name { color:var(--present); }
+.mcard.future  .mcard-name { color:var(--future); }
+.mcard-russian { font-size:.68rem; color:var(--russian); font-style:italic; margin-bottom:2px; opacity:.85; }
+.mcard-example { font-style:italic; font-size:.68rem; color:var(--text-dim); line-height:1.35; }
+
+/* ════════════════════════════════════
+   INFO BAR  (shared)
+════════════════════════════════════ */
+.info-bar {
+  margin-top:22px; width:100%;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:0; padding:18px 24px; border-radius:10px;
+  background:var(--surface); border:1px solid rgba(255,255,255,.06);
+  transition:opacity .3s ease, border-color .3s ease; animation:fadeUp 1s ease .7s both;
+}
+.info-bar.hint-mode { opacity:.45; }
+.info-bar-top { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.info-bar-name { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; }
+.info-bar-sep  { color:var(--gold-dim); }
+.info-bar-ru   { font-style:italic; color:var(--russian); font-size:.88rem; }
+
+.info-bar-ex {
+  font-style:italic; font-size:1.05rem; color:var(--text);
+  line-height:1.6; letter-spacing:.01em; text-align:center; width:100%;
+  padding-bottom:10px;
+}
+.info-bar-ex b { font-style:normal; font-weight:700; }
+
+.info-bar-ex-ru {
+  font-style:italic; font-size:.88rem; color:var(--russian);
+  text-align:center; width:100%; opacity:.8;
+  padding-bottom:12px;
+}
+.info-bar-ex-ru b { font-style:normal; font-weight:700; }
+
+.info-bar-tip {
+  font-size:.83rem; color:var(--text-dim); text-align:center;
+  line-height:1.7; width:100%; max-width:700px;
+  padding-top:10px; border-top:1px solid rgba(255,255,255,.05);
+}
+.info-bar-tip::before { content:'💡 '; }
+.info-bar-tip em { font-style:italic; color:var(--text); }
+
+.info-bar-tip-ru {
+  font-size:.81rem; color:rgba(196,174,232,.75); text-align:center;
+  line-height:1.7; width:100%; max-width:700px;
+  margin-top:6px; padding:8px 14px;
+  background:rgba(196,174,232,.05);
+  border-radius:6px; border:1px solid rgba(196,174,232,.1);
+}
+.info-bar-tip-ru::before { content:'🇷🇺 '; }
+.info-bar-tip-ru {
+  font-size:.78rem; color:var(--russian); opacity:.7; text-align:center;
+  line-height:1.6; width:100%; max-width:640px;
+  font-style:italic; margin-top:3px;
+}
+
+.info-bar.past-active    { border-color:rgba(126,184,247,.2); }
+.info-bar.present-active { border-color:rgba(168,240,192,.22); }
+.info-bar.future-active  { border-color:rgba(247,160,126,.2); }
+.info-bar-hint { font-size:.68rem; color:var(--text-dim); letter-spacing:.04em; font-style:italic; }
+
+/* ── Legend ── */
+.legend {
+  display:flex; gap:18px; justify-content:center;
+  margin-top:16px; flex-wrap:wrap; animation:fadeUp 1s ease .85s both;
+}
+.legend-item { display:flex; align-items:center; gap:6px; font-size:.7rem; color:var(--text-dim); }
+.legend-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+/* ── Animations ── */
+@keyframes fadeDown { from{opacity:0;transform:translateY(-16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes fadeUp   { from{opacity:0;transform:translateY(16px)}  to{opacity:1;transform:translateY(0)} }
+@keyframes segPulse { 0%,100%{opacity:.88} 50%{opacity:1} }
+
+/* ════════════════════════════════════
+   RESPONSIVE BREAKPOINT
+════════════════════════════════════ */
+@media (max-width:699px) {
+  body { padding:20px 12px 40px; }
+  header { margin-bottom:28px; }
+  .desktop-view { display:none; }
+  .mobile-view  { display:block; }
+  .info-bar { margin-top:16px; }
+  .info-bar-name { font-size:.88rem; }
+  .info-bar-ru   { font-size:.8rem; }
+  .info-bar-ex   { font-size:.75rem; }
+  #fsBtn { top:10px; right:10px; width:34px; height:34px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Fullscreen button -->
+<button id="fsBtn" title="Pantalla completa / Полный экран" aria-label="Fullscreen">
+  <svg id="fsIcon" viewBox="0 0 24 24">
+    <!-- expand icon -->
+    <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
+    <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
+  </svg>
+</button>
+
+<div class="wrapper">
+
+<header>
+  <p class="subtitle">Gramática Española &nbsp;·&nbsp; Грамматика испанского</p>
+  <h1>Los Tiempos <em>Verbales</em></h1>
+  <div class="header-line"></div>
+</header>
+
+<!-- ══════════════ DESKTOP VIEW ══════════════ -->
+<div class="desktop-view">
+  <div class="zone-labels">
+    <span class="zone-label past">← Pasado · Прошедшее</span>
+    <span class="zone-label now">Presente · Настоящее</span>
+    <span class="zone-label fut">Futuro · Будущее →</span>
+  </div>
+
+  <div class="diagram">
+    <!-- CARDS ABOVE -->
+    <div class="cards-above">
+      <div class="card past"    data-tense="pluscuamperfecto"     style="animation-delay:.04s">
+        <div class="card-name">Pret. Pluscuamperfecto</div>
+        <div class="card-russian">Давнопрошедшее</div>
+        <div class="card-dot"></div>
+      </div>
+      <div class="card past"    data-tense="imperfecto"           style="animation-delay:.13s">
+        <div class="card-name">Pretérito Imperfecto</div>
+        <div class="card-russian">Прош. незавершённое</div>
+        <div class="card-dot"></div>
+      </div>
+      <div class="card past"    data-tense="perfecto"             style="animation-delay:.22s">
+        <div class="card-name">Pretérito Perfecto</div>
+        <div class="card-russian">Прош. совершённое</div>
+        <div class="card-dot"></div>
+      </div>
+      <div class="card present" data-tense="presente"             style="animation-delay:.31s">
+        <div class="card-name">Presente de Indicativo</div>
+        <div class="card-russian">Настоящее время</div>
+        <div class="card-dot"></div>
+      </div>
+      <div class="card future"  data-tense="futurocompuesto"      style="animation-delay:.40s">
+        <div class="card-name">Futuro Compuesto</div>
+        <div class="card-russian">Будущее завершённое</div>
+        <div class="card-dot"></div>
+      </div>
+      <div class="card future"  data-tense="condicionalcompuesto" style="animation-delay:.49s">
+        <div class="card-name">Condicional Compuesto</div>
+        <div class="card-russian">Условное совершённое</div>
+        <div class="card-dot"></div>
+      </div>
+    </div>
+
+    <!-- MAIN SVG TIMELINE -->
+    <svg class="timeline-svg" viewBox="0 0 1200 60" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#3a7abf" stop-opacity=".3"/>
+          <stop offset="14%"  stop-color="#7eb8f7"/>
+          <stop offset="43%"  stop-color="#c9a84c"/>
+          <stop offset="50%"  stop-color="#a8f0c0"/>
+          <stop offset="57%"  stop-color="#c9a84c"/>
+          <stop offset="90%"  stop-color="#f7a07e"/>
+          <stop offset="100%" stop-color="#c05030" stop-opacity=".3"/>
+        </linearGradient>
+        <marker id="aL" markerWidth="10" markerHeight="7" refX="0"  refY="3.5" orient="auto"><polygon points="10 0,0 3.5,10 7" fill="#3a7abf" opacity=".5"/></marker>
+        <marker id="aR" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#c05030" opacity=".5"/></marker>
+        <filter id="glow" x="-20%" y="-120%" width="140%" height="340%"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="dg"><feGaussianBlur stdDeviation="2.8" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="sg" x="-8%" y="-300%" width="116%" height="700%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <clipPath id="cp"><rect x="0" y="0" width="1200" height="60"/></clipPath>
+      </defs>
+
+      <rect x="0"   y="22" width="445"  height="16" fill="rgba(62,122,191,.05)"  clip-path="url(#cp)"/>
+      <rect x="445" y="22" width="125"  height="16" fill="rgba(58,184,112,.07)"  clip-path="url(#cp)"/>
+      <rect x="570" y="22" width="630"  height="16" fill="rgba(192,80,48,.05)"   clip-path="url(#cp)"/>
+      <line x1="445" y1="6" x2="445" y2="54" stroke="rgba(201,168,76,.16)" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="570" y1="6" x2="570" y2="54" stroke="rgba(201,168,76,.16)" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <!-- Highlight segments -->
+      <g id="seg-pluscuamperfecto"     class="seg-group" opacity="0" style="transition:opacity .35s ease"><line x1="32"  y1="30" x2="162" y2="30" stroke="#7eb8f7" stroke-width="10" stroke-linecap="round" filter="url(#sg)" opacity=".65"/><line x1="32"  y1="30" x2="162" y2="30" stroke="#c8e8ff" stroke-width="3" stroke-linecap="round"/></g>
+      <g id="seg-imperfecto"           class="seg-group" opacity="0" style="transition:opacity .35s ease"><line x1="45"  y1="30" x2="440" y2="30" stroke="#7eb8f7" stroke-width="10" stroke-linecap="round" filter="url(#sg)" opacity=".55"/><line x1="45"  y1="30" x2="440" y2="30" stroke="#c8e8ff" stroke-width="3" stroke-linecap="round" stroke-dasharray="16,7"/></g>
+      <g id="seg-indefinido"           class="seg-group" opacity="0" style="transition:opacity .35s ease"><line x1="195" y1="30" x2="435" y2="30" stroke="#7eb8f7" stroke-width="10" stroke-linecap="round" filter="url(#sg)" opacity=".65"/><line x1="195" y1="30" x2="435" y2="30" stroke="#c8e8ff" stroke-width="3" stroke-linecap="round"/></g>
+      <g id="seg-anterior"             class="seg-group" opacity="0" style="transition:opacity .35s ease"><line x1="348" y1="30" x2="445" y2="30" stroke="#7eb8f7" stroke-width="10" stroke-linecap="round" filter="url(#sg)" opacity=".72"/><line x1="348" y1="30" x2="445" y2="30" stroke="#c8e8ff" stroke-width="3" stroke-linecap="round"/></g>
+      <g id="seg-perfecto"             class="seg-group" opacity="0" style="transition:opacity .35s ease"><line x1="355" y1="30" x2="512" y2="30" stroke="#7eb8f7" stroke-width="10" stroke-linecap="round" filter="url(#sg)" opacity=".68"/><line x1="355" y1="30" x2="512" y2="30" stroke="#c8e8ff" stroke-width="3" stroke-linecap="round"/></g>
+      <g id="seg-presente"             class="seg-group" opacity="0" style="transition:opacity .35s ease"><line x1="452" y1="30" x2="568" y2="30" stroke="#a8f0c0" stroke-width="10" stroke-linecap="round" filter="url(#sg)" opacity=".78"/><line x1="452" y1="30" x2="568" y2="30" stroke="#d4fce8" stroke-width="3.5" stroke-linecap="round"/></g>
+      <g id="seg-futuro"               class="seg-group" opacity="0" style="transition:opacity .35s ease"><line x1="510" y1="30" x2="762" y2="30" stroke="#f7a07e" stroke-width="10" stroke-linecap="round" filter="url(#sg)" opacity=".65"/><line x1="510" y1="30" x2="762" y2="30" stroke="#ffd8c0" stroke-width="3" stroke-linecap="round"/></g>
+      <g id="seg-futurocompuesto"      class="seg-group" opacity="0" style="transition:opacity .35s ease"><line x1="510" y1="30" x2="878" y2="30" stroke="#f7a07e" stroke-width="10" stroke-linecap="round" filter="url(#sg)" opacity=".58"/><line x1="510" y1="30" x2="878" y2="30" stroke="#ffd8c0" stroke-width="3" stroke-linecap="round" stroke-dasharray="16,7"/></g>
+      <g id="seg-condicional"          class="seg-group" opacity="0" style="transition:opacity .35s ease"><line x1="468" y1="30" x2="992" y2="30" stroke="#f7a07e" stroke-width="10" stroke-linecap="round" filter="url(#sg)" opacity=".50"/><line x1="468" y1="30" x2="992" y2="30" stroke="#ffd8c0" stroke-width="3" stroke-linecap="round" stroke-dasharray="11,9"/></g>
+      <g id="seg-condicionalcompuesto" class="seg-group" opacity="0" style="transition:opacity .35s ease"><line x1="45"  y1="30" x2="1100" y2="30" stroke="#f7a07e" stroke-width="10" stroke-linecap="round" filter="url(#sg)" opacity=".40"/><line x1="45"  y1="30" x2="1100" y2="30" stroke="#ffd8c0" stroke-width="3" stroke-linecap="round" stroke-dasharray="8,10"/></g>
+
+      <!-- Arrows -->
+      <line x1="22"   y1="30" x2="52"   y2="30" stroke="#3a7abf" stroke-width="1.5" stroke-opacity=".5" marker-start="url(#aL)"/>
+      <line x1="1148" y1="30" x2="1178" y2="30" stroke="#c05030" stroke-width="1.5" stroke-opacity=".5" marker-end="url(#aR)"/>
+
+      <!-- Base line -->
+      <line x1="32" y1="30" x2="1168" y2="30" stroke="url(#lg)" stroke-width="6"   stroke-opacity=".2"  filter="url(#glow)"/>
+      <line x1="32" y1="30" x2="1168" y2="30" stroke="url(#lg)" stroke-width="2.5" filter="url(#glow)"/>
+
+      <!-- Dots -->
+      <line x1="90"   y1="23" x2="90"   y2="37" stroke="#7eb8f7" stroke-width="1.5"/><circle cx="90"   cy="30" r="5" fill="#0d0f14" stroke="#7eb8f7" stroke-width="1.8" filter="url(#dg)"/>
+      <line x1="215"  y1="23" x2="215"  y2="37" stroke="#7eb8f7" stroke-width="1.5"/><circle cx="215"  cy="30" r="5" fill="#0d0f14" stroke="#7eb8f7" stroke-width="1.8" filter="url(#dg)"/>
+      <line x1="312"  y1="37" x2="312"  y2="53" stroke="#7eb8f7" stroke-width="1.5"/><circle cx="312"  cy="30" r="5" fill="#0d0f14" stroke="#7eb8f7" stroke-width="1.8" filter="url(#dg)"/>
+      <line x1="386"  y1="37" x2="386"  y2="53" stroke="#7eb8f7" stroke-width="1.5"/><circle cx="386"  cy="30" r="5" fill="#0d0f14" stroke="#7eb8f7" stroke-width="1.8" filter="url(#dg)"/>
+      <line x1="426"  y1="23" x2="426"  y2="37" stroke="#7eb8f7" stroke-width="1.5"/><circle cx="426"  cy="30" r="5" fill="#0d0f14" stroke="#7eb8f7" stroke-width="1.8" filter="url(#dg)"/>
+      <line x1="510"  y1="14" x2="510"  y2="46" stroke="#a8f0c0" stroke-width="2"/><circle cx="510"  cy="30" r="7" fill="#a8f0c0" stroke="#0d0f14" stroke-width="1.5" filter="url(#dg)"/>
+      <text x="510" y="10" text-anchor="middle" fill="#a8f0c0" font-size="8.5" font-family="'Crimson Pro',serif" letter-spacing="1.8" font-weight="600">AHORA</text>
+      <line x1="664"  y1="37" x2="664"  y2="53" stroke="#f7a07e" stroke-width="1.5"/><circle cx="664"  cy="30" r="5" fill="#0d0f14" stroke="#f7a07e" stroke-width="1.8" filter="url(#dg)"/>
+      <line x1="800"  y1="23" x2="800"  y2="37" stroke="#f7a07e" stroke-width="1.5"/><circle cx="800"  cy="30" r="5" fill="#0d0f14" stroke="#f7a07e" stroke-width="1.8" filter="url(#dg)"/>
+      <line x1="920"  y1="37" x2="920"  y2="53" stroke="#f7a07e" stroke-width="1.5"/><circle cx="920"  cy="30" r="5" fill="#0d0f14" stroke="#f7a07e" stroke-width="1.8" filter="url(#dg)"/>
+      <line x1="1060" y1="23" x2="1060" y2="37" stroke="#f7a07e" stroke-width="1.5"/><circle cx="1060" cy="30" r="5" fill="#0d0f14" stroke="#f7a07e" stroke-width="1.8" filter="url(#dg)"/>
+    </svg>
+
+    <!-- CARDS BELOW -->
+    <div class="cards-below">
+      <div class="card past"   data-tense="indefinido"  style="animation-delay:.07s">
+        <div class="card-dot"></div>
+        <div class="card-name">Pretérito Indefinido</div>
+        <div class="card-russian">Прош. завершённое</div>
+      </div>
+      <div class="card past"   data-tense="anterior"    style="animation-delay:.16s">
+        <div class="card-dot"></div>
+        <div class="card-name">Pretérito Anterior</div>
+        <div class="card-russian">Прош. предшествующее</div>
+      </div>
+      <div style="flex:1;max-width:152px;min-width:82px;"></div>
+      <div class="card future" data-tense="futuro"      style="animation-delay:.25s">
+        <div class="card-dot"></div>
+        <div class="card-name">Futuro Simple</div>
+        <div class="card-russian">Будущее простое</div>
+      </div>
+      <div class="card future" data-tense="condicional" style="animation-delay:.34s">
+        <div class="card-dot"></div>
+        <div class="card-name">Condicional Simple</div>
+        <div class="card-russian">Условное простое</div>
+      </div>
+    </div>
+  </div><!-- .diagram -->
+</div><!-- .desktop-view -->
+
+<!-- ══════════════ MOBILE VIEW ══════════════ -->
+<div class="mobile-view">
+  <!-- Mini zones -->
+  <div class="mobile-zones">
+    <span class="mobile-zone past">← Pasado</span>
+    <span class="mobile-zone now">Presente</span>
+    <span class="mobile-zone fut">Futuro →</span>
+  </div>
+
+  <!-- Mini timeline SVG -->
+  <div class="mini-timeline-wrap">
+    <svg class="mini-svg" viewBox="0 0 400 36" preserveAspectRatio="xMidYMid meet">
+      <defs>
+        <linearGradient id="mlg" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stop-color="#3a7abf" stop-opacity=".4"/>
+          <stop offset="38%"  stop-color="#7eb8f7"/>
+          <stop offset="48%"  stop-color="#a8f0c0"/>
+          <stop offset="58%"  stop-color="#c9a84c"/>
+          <stop offset="85%"  stop-color="#f7a07e"/>
+          <stop offset="100%" stop-color="#c05030" stop-opacity=".4"/>
+        </linearGradient>
+        <marker id="maL" markerWidth="8" markerHeight="6" refX="0"  refY="3" orient="auto"><polygon points="8 0,0 3,8 6" fill="#3a7abf" opacity=".5"/></marker>
+        <marker id="maR" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#c05030" opacity=".5"/></marker>
+        <filter id="mGlow" x="-15%" y="-200%" width="130%" height="500%"><feGaussianBlur stdDeviation="3" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <filter id="mDg"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        <clipPath id="mcp"><rect x="0" y="0" width="400" height="36"/></clipPath>
+      </defs>
+      <!-- Zone fills -->
+      <rect x="0"   y="10" width="150"  height="16" fill="rgba(62,122,191,.05)"  clip-path="url(#mcp)"/>
+      <rect x="150" y="10" width="50"   height="16" fill="rgba(58,184,112,.07)"  clip-path="url(#mcp)"/>
+      <rect x="200" y="10" width="200"  height="16" fill="rgba(192,80,48,.05)"   clip-path="url(#mcp)"/>
+      <!-- Dividers -->
+      <line x1="150" y1="3" x2="150" y2="33" stroke="rgba(201,168,76,.2)" stroke-width=".8" stroke-dasharray="3,2"/>
+      <line x1="200" y1="3" x2="200" y2="33" stroke="rgba(201,168,76,.2)" stroke-width=".8" stroke-dasharray="3,2"/>
+      <!-- Mini highlights -->
+      <g id="mseg-pluscuamperfecto"     class="mseg" opacity="0" style="transition:opacity .3s ease"><line x1="10"  y1="18" x2="55"  y2="18" stroke="#7eb8f7" stroke-width="7" stroke-linecap="round" filter="url(#mGlow)" opacity=".6"/><line x1="10"  y1="18" x2="55"  y2="18" stroke="#c8e8ff" stroke-width="2.5" stroke-linecap="round"/></g>
+      <g id="mseg-imperfecto"           class="mseg" opacity="0" style="transition:opacity .3s ease"><line x1="14"  y1="18" x2="148" y2="18" stroke="#7eb8f7" stroke-width="7" stroke-linecap="round" filter="url(#mGlow)" opacity=".5"/><line x1="14"  y1="18" x2="148" y2="18" stroke="#c8e8ff" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="10,5"/></g>
+      <g id="mseg-indefinido"           class="mseg" opacity="0" style="transition:opacity .3s ease"><line x1="65"  y1="18" x2="145" y2="18" stroke="#7eb8f7" stroke-width="7" stroke-linecap="round" filter="url(#mGlow)" opacity=".6"/><line x1="65"  y1="18" x2="145" y2="18" stroke="#c8e8ff" stroke-width="2.5" stroke-linecap="round"/></g>
+      <g id="mseg-anterior"             class="mseg" opacity="0" style="transition:opacity .3s ease"><line x1="116" y1="18" x2="150" y2="18" stroke="#7eb8f7" stroke-width="7" stroke-linecap="round" filter="url(#mGlow)" opacity=".7"/><line x1="116" y1="18" x2="150" y2="18" stroke="#c8e8ff" stroke-width="2.5" stroke-linecap="round"/></g>
+      <g id="mseg-perfecto"             class="mseg" opacity="0" style="transition:opacity .3s ease"><line x1="118" y1="18" x2="172" y2="18" stroke="#7eb8f7" stroke-width="7" stroke-linecap="round" filter="url(#mGlow)" opacity=".65"/><line x1="118" y1="18" x2="172" y2="18" stroke="#c8e8ff" stroke-width="2.5" stroke-linecap="round"/></g>
+      <g id="mseg-presente"             class="mseg" opacity="0" style="transition:opacity .3s ease"><line x1="152" y1="18" x2="198" y2="18" stroke="#a8f0c0" stroke-width="7" stroke-linecap="round" filter="url(#mGlow)" opacity=".75"/><line x1="152" y1="18" x2="198" y2="18" stroke="#d4fce8" stroke-width="3" stroke-linecap="round"/></g>
+      <g id="mseg-futuro"               class="mseg" opacity="0" style="transition:opacity .3s ease"><line x1="170" y1="18" x2="255" y2="18" stroke="#f7a07e" stroke-width="7" stroke-linecap="round" filter="url(#mGlow)" opacity=".6"/><line x1="170" y1="18" x2="255" y2="18" stroke="#ffd8c0" stroke-width="2.5" stroke-linecap="round"/></g>
+      <g id="mseg-futurocompuesto"      class="mseg" opacity="0" style="transition:opacity .3s ease"><line x1="170" y1="18" x2="295" y2="18" stroke="#f7a07e" stroke-width="7" stroke-linecap="round" filter="url(#mGlow)" opacity=".55"/><line x1="170" y1="18" x2="295" y2="18" stroke="#ffd8c0" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="10,5"/></g>
+      <g id="mseg-condicional"          class="mseg" opacity="0" style="transition:opacity .3s ease"><line x1="156" y1="18" x2="335" y2="18" stroke="#f7a07e" stroke-width="7" stroke-linecap="round" filter="url(#mGlow)" opacity=".45"/><line x1="156" y1="18" x2="335" y2="18" stroke="#ffd8c0" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="7,6"/></g>
+      <g id="mseg-condicionalcompuesto" class="mseg" opacity="0" style="transition:opacity .3s ease"><line x1="14"  y1="18" x2="370" y2="18" stroke="#f7a07e" stroke-width="7" stroke-linecap="round" filter="url(#mGlow)" opacity=".35"/><line x1="14"  y1="18" x2="370" y2="18" stroke="#ffd8c0" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="5,7"/></g>
+      <!-- Arrows -->
+      <line x1="8"   y1="18" x2="22"  y2="18" stroke="#3a7abf" stroke-width="1.2" stroke-opacity=".5" marker-start="url(#maL)"/>
+      <line x1="378" y1="18" x2="392" y2="18" stroke="#c05030" stroke-width="1.2" stroke-opacity=".5" marker-end="url(#maR)"/>
+      <!-- Base line -->
+      <line x1="10" y1="18" x2="390" y2="18" stroke="url(#mlg)" stroke-width="5" stroke-opacity=".2" filter="url(#mGlow)"/>
+      <line x1="10" y1="18" x2="390" y2="18" stroke="url(#mlg)" stroke-width="1.8"/>
+      <!-- Dots -->
+      <circle cx="30"  cy="18" r="3.5" fill="#0d0f14" stroke="#7eb8f7" stroke-width="1.4" filter="url(#mDg)"/>
+      <circle cx="72"  cy="18" r="3.5" fill="#0d0f14" stroke="#7eb8f7" stroke-width="1.4" filter="url(#mDg)"/>
+      <circle cx="104" cy="18" r="3.5" fill="#0d0f14" stroke="#7eb8f7" stroke-width="1.4" filter="url(#mDg)"/>
+      <circle cx="128" cy="18" r="3.5" fill="#0d0f14" stroke="#7eb8f7" stroke-width="1.4" filter="url(#mDg)"/>
+      <circle cx="142" cy="18" r="3.5" fill="#0d0f14" stroke="#7eb8f7" stroke-width="1.4" filter="url(#mDg)"/>
+      <circle cx="175" cy="18" r="5"   fill="#a8f0c0" stroke="#0d0f14" stroke-width="1.2" filter="url(#mDg)"/>
+      <text x="175" y="9" text-anchor="middle" fill="#a8f0c0" font-size="5.5" font-family="'Crimson Pro',serif" letter-spacing="1.2" font-weight="600">AHORA</text>
+      <circle cx="222" cy="18" r="3.5" fill="#0d0f14" stroke="#f7a07e" stroke-width="1.4" filter="url(#mDg)"/>
+      <circle cx="267" cy="18" r="3.5" fill="#0d0f14" stroke="#f7a07e" stroke-width="1.4" filter="url(#mDg)"/>
+      <circle cx="308" cy="18" r="3.5" fill="#0d0f14" stroke="#f7a07e" stroke-width="1.4" filter="url(#mDg)"/>
+      <circle cx="355" cy="18" r="3.5" fill="#0d0f14" stroke="#f7a07e" stroke-width="1.4" filter="url(#mDg)"/>
+    </svg>
+  </div>
+
+  <!-- Mobile card list -->
+  <div class="mobile-cards">
+
+    <div class="mobile-section-title past-label">Pasado · Прошедшее</div>
+
+    <div class="mcard past"    data-tense="pluscuamperfecto"     style="animation-delay:.05s">
+      <div class="mcard-indicator"></div>
+      <div class="mcard-body">
+        <div class="mcard-name">Pret. Pluscuamperfecto</div>
+        <div class="mcard-russian">Давнопрошедшее</div>
+      </div>
+    </div>
+    <div class="mcard past"    data-tense="imperfecto"           style="animation-delay:.10s">
+      <div class="mcard-indicator"></div>
+      <div class="mcard-body">
+        <div class="mcard-name">Pretérito Imperfecto</div>
+        <div class="mcard-russian">Прош. незавершённое</div>
+      </div>
+    </div>
+    <div class="mcard past"    data-tense="indefinido"           style="animation-delay:.15s">
+      <div class="mcard-indicator"></div>
+      <div class="mcard-body">
+        <div class="mcard-name">Pretérito Indefinido</div>
+        <div class="mcard-russian">Прош. завершённое</div>
+      </div>
+    </div>
+    <div class="mcard past"    data-tense="anterior"             style="animation-delay:.20s">
+      <div class="mcard-indicator"></div>
+      <div class="mcard-body">
+        <div class="mcard-name">Pretérito Anterior</div>
+        <div class="mcard-russian">Прош. предшествующее</div>
+      </div>
+    </div>
+    <div class="mcard past"    data-tense="perfecto"             style="animation-delay:.25s">
+      <div class="mcard-indicator"></div>
+      <div class="mcard-body">
+        <div class="mcard-name">Pretérito Perfecto</div>
+        <div class="mcard-russian">Прош. совершённое</div>
+      </div>
+    </div>
+
+    <div class="mobile-section-title present-label" style="margin-top:4px">Presente · Настоящее</div>
+
+    <div class="mcard present" data-tense="presente"             style="animation-delay:.30s">
+      <div class="mcard-indicator"></div>
+      <div class="mcard-body">
+        <div class="mcard-name">Presente de Indicativo</div>
+        <div class="mcard-russian">Настоящее время</div>
+      </div>
+    </div>
+
+    <div class="mobile-section-title future-label" style="margin-top:4px">Futuro / Condicional · Будущее</div>
+
+    <div class="mcard future"  data-tense="futuro"               style="animation-delay:.35s">
+      <div class="mcard-indicator"></div>
+      <div class="mcard-body">
+        <div class="mcard-name">Futuro Simple</div>
+        <div class="mcard-russian">Будущее простое</div>
+      </div>
+    </div>
+    <div class="mcard future"  data-tense="futurocompuesto"      style="animation-delay:.40s">
+      <div class="mcard-indicator"></div>
+      <div class="mcard-body">
+        <div class="mcard-name">Futuro Compuesto</div>
+        <div class="mcard-russian">Будущее завершённое</div>
+      </div>
+    </div>
+    <div class="mcard future"  data-tense="condicional"          style="animation-delay:.45s">
+      <div class="mcard-indicator"></div>
+      <div class="mcard-body">
+        <div class="mcard-name">Condicional Simple</div>
+        <div class="mcard-russian">Условное простое</div>
+      </div>
+    </div>
+    <div class="mcard future"  data-tense="condicionalcompuesto" style="animation-delay:.50s">
+      <div class="mcard-indicator"></div>
+      <div class="mcard-body">
+        <div class="mcard-name">Condicional Compuesto</div>
+        <div class="mcard-russian">Условное совершённое</div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- .mobile-view -->
+
+<!-- INFO BAR (shared) -->
+<div class="info-bar hint-mode" id="infoBar">
+  <span class="info-bar-hint">Toca una tarjeta · Нажми на карточку</span>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--past)"></div><span>Pasado</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--present)"></div><span>Presente</span></div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--future)"></div><span>Futuro / Condicional</span></div>
+  <div class="legend-item" style="margin-left:12px;border-left:1px solid #222;padding-left:12px;">
+    <div class="legend-dot" style="background:var(--russian);border-radius:2px;"></div>
+    <span style="color:var(--russian)">Русский перевод</span>
+  </div>
+</div>
+
+</div><!-- .wrapper -->
+
+<script>
+/* ── Data ── */
+const DATA = {
+  pluscuamperfecto: {
+    name:'Pret. Pluscuamperfecto', ru:'Давнопрошедшее (había comido)', color:'past',
+    ex:   '<b>Había comido</b> antes de que ella llegara.',
+    exRu: '<b>Я поел</b> до того, как она пришла.',
+    tip:  'Two past events — this one happened <em>first</em>. Use it when you need to say something was already done before another past moment. Think of it as "the past of the past."',
+    tipRu:'Два события в прошлом — это произошло <em>раньше</em> другого. Используется, когда нужно сказать, что что-то уже было сделано до другого прошедшего момента. Представь это как «прошлое внутри прошлого». В русском языке этот оттенок передаётся порядком слов или союзами («до того как», «уже когда»), а в испанском — специальным временем.'
+  },
+  imperfecto: {
+    name:'Pretérito Imperfecto', ru:'Прошедшее незавершённое (comía)', color:'past',
+    ex:   'De niño <b>comía</b> mucho.',
+    exRu: 'В детстве я <b>много ел</b>.',
+    tip:  'A habit, routine, or ongoing state in the past — with no clear start or end. Think of it as painting the background of a story: "It was raining. People were walking." Nothing is finished, it\'s just a scene.',
+    tipRu:'Привычка, повторяющееся действие или состояние в прошлом — без чёткого начала или конца. Представь, что ты рисуешь фон истории: «Шёл дождь. Люди ходили.» Ничего не завершено — это просто картина момента. В русском это близко к несовершенному виду глагола (ел, ходил, жил). Ключевые маркеры: siempre (всегда), normalmente (обычно), todos los días (каждый день).'
+  },
+  indefinido: {
+    name:'Pretérito Indefinido', ru:'Прошедшее завершённое (comí)', color:'past',
+    ex:   'Ayer <b>comí</b> en casa.',
+    exRu: 'Вчера я <b>поел</b> дома.',
+    tip:  'A single, completed action in the past at a specific time. The story moved forward because of it. Think of it as a snapshot — it happened, it finished, and now we move on.',
+    tipRu:'Однократное завершённое действие в прошлом в конкретный момент. История движется вперёд именно из-за него. Думай об этом как о кадре — произошло, закончилось, идём дальше. В русском это ближе к совершенному виду (поел, пришёл, сделал). Ключевые маркеры: ayer (вчера), el lunes (в понедельник), hace dos años (два года назад).'
+  },
+  anterior: {
+    name:'Pretérito Anterior', ru:'Прошедшее предшествующее (hube comido)', color:'past',
+    ex:   'Cuando <b>hube comido</b>, salí.',
+    exRu: 'Когда я <b>поел</b>, я вышел.',
+    tip:  'Extremely formal and rare — only in written literary Spanish. Signals that one past action happened immediately before another. In everyday speech and modern writing, the Indefinido replaces it entirely.',
+    tipRu:'Крайне книжное и редкое время — встречается только в литературном письменном испанском. Означает, что одно прошедшее действие произошло непосредственно перед другим. В разговорной речи и современных текстах его полностью заменяет Pretérito Indefinido. Если ты слышишь «hube comido» — это, скорее всего, художественная литература XIX века. В современном языке ты скажешь просто «cuando comí, salí».'
+  },
+  perfecto: {
+    name:'Pretérito Perfecto', ru:'Прошедшее совершённое (he comido)', color:'past',
+    ex:   'Hoy <b>he comido</b> paella.',
+    exRu: 'Сегодня я <b>поел</b> паэлью.',
+    tip:  'A past action that still feels relevant to the present moment — today, this week, ever in your life. The key question: does the time period still feel open? "Today" is still going, so use this. "Yesterday" is over, so use Indefinido.',
+    tipRu:'Прошедшее действие, которое всё ещё ощущается связанным с настоящим — сегодня, на этой неделе, когда-либо в жизни. Главный вопрос: период времени ещё не закончился? «Сегодня» ещё продолжается — используй это время. «Вчера» уже закончилось — используй Indefinido. Важно: в Латинской Америке это различие почти не соблюдается, и Indefinido используется в обоих случаях. В Испании же разница строго соблюдается. Ключевые маркеры: hoy (сегодня), esta semana (на этой неделе), alguna vez (когда-нибудь), nunca (никогда).'
+  },
+  presente: {
+    name:'Presente de Indicativo', ru:'Настоящее время (como)', color:'present',
+    ex:   'Ahora mismo <b>como</b> paella.',
+    exRu: 'Прямо сейчас я <b>ем</b> паэлью.',
+    tip:  'The foundation of the language. Covers: what is happening right now, universal truths, habits, and near-future plans. If in doubt, you can often use this tense — and you\'ll be understood.',
+    tipRu:'Основа языка. Охватывает: то, что происходит прямо сейчас, универсальные истины, привычки и ближайшие планы. Если сомневаешься — зачастую можно использовать именно это время и тебя поймут. В отличие от русского, в испанском нет разницы между «я ем» и «я поем» в этом времени — контекст решает всё. Это время также используется для исторического настоящего («Колумб открывает Америку в 1492 году»).'
+  },
+  futuro: {
+    name:'Futuro Simple', ru:'Будущее простое (comeré)', color:'future',
+    ex:   'Mañana <b>comeré</b> paella.',
+    exRu: 'Завтра я <b>поем</b> паэлью.',
+    tip:  'Something that will happen. Also used to speculate about the present: "¿Dónde estará Juan?" = "I wonder where Juan is right now." In casual speech, the present tense often replaces it for near-future plans.',
+    tipRu:'То, что произойдёт в будущем. Также используется для предположений о настоящем: «¿Dónde estará Juan?» = «Интересно, где сейчас Хуан?» — это не вопрос о будущем, а догадка о текущем моменте. В разговорной речи будущее часто заменяется настоящим временем с указателем времени: «Mañana como contigo» (Завтра я ем с тобой). Это нормально и естественно.'
+  },
+  futurocompuesto: {
+    name:'Futuro Compuesto', ru:'Будущее завершённое (habré comido)', color:'future',
+    ex:   'Para las 3 ya <b>habré comido</b>.',
+    exRu: 'К 3 часам я уже <b>поем</b> (буду уже поевшим).',
+    tip:  'By a specific future point, this action will already be completed. Think: "I will have done X by the time Y happens." Also used to speculate about the past: "Ya habrá llegado" = "He has probably arrived by now."',
+    tipRu:'К определённому моменту в будущем это действие уже будет завершено. Думай: «Я уже сделаю X к тому времени, когда произойдёт Y». В русском нет точного аналога — мы говорим «к трём часам я уже поем» (совершенный вид в будущем). Также используется для предположений о прошлом: «Ya habrá llegado» = «Он, наверное, уже приехал» — это особенность испанского, в русском мы бы сказали «наверное, уже приехал».'
+  },
+  condicional: {
+    name:'Condicional Simple', ru:'Условное простое (comería)', color:'future',
+    ex:   'Dijo que <b>comería</b> después.',
+    exRu: 'Он сказал, что <b>поест</b> потом.',
+    tip:  'What would happen under some condition, or what someone said they would do (reported speech). Like "would" in English. Also used for polite requests: "¿Podría ayudarme?" = "Could you help me?"',
+    tipRu:'То, что произошло бы при каком-то условии, или что кто-то сказал, что сделает (косвенная речь). Как «would» в английском или условное наклонение в русском («бы»). Также используется для вежливых просьб: «¿Podría ayudarme?» = «Не могли бы вы мне помочь?». В русском косвенная речь меняет время: «он сказал, что поест» — в испанском это передаётся именно Condicional, что поначалу непривычно.'
+  },
+  condicionalcompuesto: {
+    name:'Condicional Compuesto', ru:'Условное совершённое (habría comido)', color:'future',
+    ex:   'Lo <b>habría comido</b> si hubiera podido.',
+    exRu: 'Я бы <b>поел</b> это, если бы смог.',
+    tip:  'What would have happened — but didn\'t. Always about an unreal or missed situation in the past. Always paired with a past subjunctive ("if I had been able to..."). Like "would have" in English.',
+    tipRu:'То, что могло бы произойти, но не произошло — упущенная возможность или нереальное прошлое. Всегда связано с прошедшим сослагательным наклонением (Subjuntivo Pluscuamperfecto): «si hubiera podido» = «если бы я смог». В русском это передаётся конструкцией «бы + совершенный вид прошедшего»: «я бы поел, если бы смог». Эта пара (Condicional Compuesto + Subjuntivo Pluscuamperfecto) — одна из самых сложных в испанском, но логика простая: нереальное условие в прошлом → нереальный результат в прошлом.'
+  },
+};
+const CV = { past:'var(--past)', present:'var(--present)', future:'var(--future)' };
+
+let active = null;
+const infoBar = document.getElementById('infoBar');
+
+function clearAll() {
+  document.querySelectorAll('.seg-group, .mseg').forEach(g => { g.style.opacity='0'; g.style.animation=''; });
+  document.querySelectorAll('.card, .mcard').forEach(c => c.classList.remove('active'));
+}
+
+function activate(key, el) {
+  if (active === key) {
+    clearAll(); active = null;
+    infoBar.className = 'info-bar hint-mode';
+    infoBar.innerHTML = '<span class="info-bar-hint">Toca una tarjeta · Нажми на карточку</span>';
+    return;
+  }
+  clearAll(); active = key;
+
+  // Mark all cards with this tense active (desktop + mobile may both exist)
+  document.querySelectorAll(`[data-tense="${key}"]`).forEach(c => c.classList.add('active'));
+
+  const d = DATA[key];
+  // Highlight desktop segment
+  const seg = document.getElementById('seg-' + key);
+  if (seg) { seg.style.opacity='1'; seg.style.animation='segPulse 2.4s ease-in-out infinite'; }
+  // Highlight mobile segment
+  const mseg = document.getElementById('mseg-' + key);
+  if (mseg) { mseg.style.opacity='1'; mseg.style.animation='segPulse 2.4s ease-in-out infinite'; }
+
+  const c = CV[d.color];
+  infoBar.className = 'info-bar ' + d.color + '-active';
+  infoBar.innerHTML =
+    `<div class="info-bar-top">` +
+      `<span class="info-bar-name" style="color:${c}">${d.name}</span>` +
+      `<span class="info-bar-sep">·</span>` +
+      `<span class="info-bar-ru">${d.ru}</span>` +
+    `</div>` +
+    `<div class="info-bar-ex">${d.ex}</div>` +
+    `<div class="info-bar-ex-ru">${d.exRu}</div>` +
+    `<div class="info-bar-tip">${d.tip}</div>` +
+    `<div class="info-bar-tip-ru">${d.tipRu}</div>`;
+}
+
+document.querySelectorAll('[data-tense]').forEach(el => {
+  el.addEventListener('click', () => activate(el.dataset.tense, el));
+  el.addEventListener('touchend', e => { e.preventDefault(); activate(el.dataset.tense, el); });
+});
+
+/* ── Fullscreen ── */
+const fsBtn  = document.getElementById('fsBtn');
+const fsIcon = document.getElementById('fsIcon');
+const EXPAND  = `<polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/><line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>`;
+const COMPRESS= `<polyline points="4 14 4 20 10 20"/><polyline points="20 10 20 4 14 4"/><line x1="4" y1="20" x2="11" y2="13"/><line x1="20" y1="4" x2="13" y2="11"/>`;
+
+fsBtn.addEventListener('click', () => {
+  const el = document.documentElement;
+  const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  if (!isFS) {
+    (el.requestFullscreen || el.webkitRequestFullscreen || el.mozRequestFullScreen).call(el);
+  } else {
+    (document.exitFullscreen || document.webkitExitFullscreen || document.mozCancelFullScreen).call(document);
+  }
+});
+
+function onFSChange() {
+  const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement);
+  fsIcon.innerHTML = isFS ? COMPRESS : EXPAND;
+  fsBtn.title = isFS ? 'Salir · Выйти' : 'Pantalla completa · Полный экран';
+}
+document.addEventListener('fullscreenchange',       onFSChange);
+document.addEventListener('webkitfullscreenchange', onFSChange);
+document.addEventListener('mozfullscreenchange',    onFSChange);
+</script>
+</body>
+</html>
