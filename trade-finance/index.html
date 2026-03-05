@@ -1,0 +1,2122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trade Finance × GenLayer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #ffffff;
+      --card: #f7f7f7;
+      --red: #dc2626;
+      --red-light: #fee2e2;
+      --dark: #1a1817;
+      --muted: #74706c;
+      --border: #e5e3e0;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --blue: #2563eb;
+      --blue-light: #dbeafe;
+      --amber: #d97706;
+      --amber-light: #fef3c7;
+      --radius: 12px;
+      --radius-xl: 20px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.04);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'DM Sans', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      font-size: 16px;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .mono { font-family: 'DM Mono', monospace; }
+    .container { max-width: 1152px; margin: 0 auto; padding: 0 24px; }
+
+    /* ─── HEADER ─── */
+    header {
+      position: sticky; top: 16px; z-index: 100;
+      padding: 0 24px;
+      margin-bottom: 0;
+    }
+    .header-inner {
+      max-width: 1152px; margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 9999px;
+      padding: 12px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(12px);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 8px;
+      font-weight: 700; font-size: 15px; letter-spacing: -0.3px;
+      text-decoration: none; color: var(--dark);
+    }
+    .logo-badge {
+      background: var(--red); color: white;
+      border-radius: 6px; padding: 2px 7px;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.5px;
+      font-family: 'DM Mono', monospace;
+    }
+    .logo-x { color: var(--muted); margin: 0 2px; }
+    nav { display: flex; gap: 4px; align-items: center; }
+    nav a {
+      color: var(--muted); text-decoration: none;
+      font-size: 14px; font-weight: 500;
+      padding: 6px 14px; border-radius: 9999px;
+      transition: all 0.2s;
+    }
+    nav a:hover { background: white; color: var(--dark); box-shadow: var(--shadow); }
+    .btn-primary {
+      background: var(--dark); color: white;
+      border: none; border-radius: 9999px;
+      padding: 8px 18px; font-size: 14px; font-weight: 600;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary:hover { background: #2d2927; transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn-secondary {
+      background: white; color: var(--dark);
+      border: 1px solid var(--border); border-radius: 9999px;
+      padding: 8px 18px; font-size: 14px; font-weight: 600;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s; text-decoration: none;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-secondary:hover { border-color: var(--dark); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn-red {
+      background: var(--red); color: white;
+      border: none; border-radius: 9999px;
+      padding: 8px 18px; font-size: 14px; font-weight: 600;
+      cursor: pointer; font-family: 'DM Sans', sans-serif;
+      transition: all 0.2s;
+    }
+    .btn-red:hover { background: #b91c1c; transform: translateY(-1px); }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 100px 0 80px;
+      text-align: center;
+    }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--red-light); color: var(--red);
+      border-radius: 9999px; padding: 4px 14px;
+      font-size: 13px; font-weight: 600;
+      margin-bottom: 28px;
+      font-family: 'DM Mono', monospace;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 700; line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--red); }
+    .hero-sub {
+      font-size: 18px; color: var(--muted);
+      max-width: 620px; margin: 0 auto 48px;
+      line-height: 1.65;
+    }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 60px; }
+
+    .terminal {
+      background: #1a1817; border-radius: var(--radius-xl);
+      padding: 0; max-width: 700px; margin: 0 auto;
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+    }
+    .terminal-bar {
+      background: #2d2927; padding: 12px 20px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ef4444; }
+    .dot-y { background: #f59e0b; }
+    .dot-g { background: #22c55e; }
+    .terminal-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; color: #74706c;
+      margin-left: 8px;
+    }
+    .terminal-body {
+      padding: 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      line-height: 2;
+      color: #a1a1aa;
+    }
+    .terminal-body .cmd { color: #86efac; }
+    .terminal-body .comment { color: #4b5563; }
+    .terminal-body .str { color: #fbbf24; }
+    .terminal-body .key { color: #93c5fd; }
+    .terminal-body .val { color: #f9a8d4; }
+    .terminal-cursor {
+      display: inline-block; width: 8px; height: 14px;
+      background: #86efac; vertical-align: middle;
+      animation: blink 1.2s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* ─── SECTION HEADERS ─── */
+    .section { padding: 80px 0; }
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; font-weight: 500;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--red); margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700; line-height: 1.15;
+      letter-spacing: -0.8px;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 17px; color: var(--muted);
+      max-width: 560px; line-height: 1.65;
+    }
+    .section-header { margin-bottom: 48px; }
+
+    /* ─── DEAL FLOW ─── */
+    #live-demo { background: var(--card); }
+    .deal-card {
+      background: white; border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    .deal-card-header {
+      background: var(--dark); padding: 20px 28px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: gap;
+    }
+    .deal-card-header .deal-id {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px; color: #86efac;
+    }
+    .deal-card-header .deal-status-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      border-radius: 9999px; padding: 3px 10px;
+      letter-spacing: 0.5px;
+      transition: all 0.4s;
+    }
+    .status-pending { background: rgba(251,191,36,0.15); color: #fbbf24; border: 1px solid rgba(251,191,36,0.3); }
+    .status-active { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }
+    .status-complete { background: rgba(99,102,241,0.15); color: #818cf8; border: 1px solid rgba(99,102,241,0.3); }
+    .status-disputed { background: rgba(239,68,68,0.15); color: #f87171; border: 1px solid rgba(239,68,68,0.3); }
+
+    /* STEPPER */
+    .stepper {
+      display: flex; align-items: flex-start;
+      padding: 28px 28px 0;
+      gap: 0;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .stepper::-webkit-scrollbar { display: none; }
+    .step-item {
+      display: flex; flex-direction: column; align-items: center;
+      flex: 1; min-width: 80px;
+      cursor: pointer;
+    }
+    .step-connector {
+      flex: 1; height: 2px;
+      background: var(--border);
+      margin-top: 18px;
+      transition: background 0.4s;
+      min-width: 12px;
+    }
+    .step-connector.active { background: var(--red); }
+    .step-dot {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 2px solid var(--border);
+      background: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700;
+      color: var(--muted);
+      transition: all 0.4s;
+      position: relative; z-index: 1;
+    }
+    .step-item.done .step-dot {
+      background: var(--dark); border-color: var(--dark); color: white;
+    }
+    .step-item.active .step-dot {
+      background: var(--red); border-color: var(--red); color: white;
+      box-shadow: 0 0 0 4px rgba(220,38,38,0.15);
+      transform: scale(1.1);
+    }
+    .step-label {
+      font-size: 11px; font-weight: 600; color: var(--muted);
+      margin-top: 8px; text-align: center;
+      transition: color 0.3s;
+      line-height: 1.3;
+      max-width: 70px;
+    }
+    .step-item.active .step-label { color: var(--red); }
+    .step-item.done .step-label { color: var(--dark); }
+
+    /* STEP CONTENT */
+    .step-content-area {
+      padding: 32px 28px 28px;
+      min-height: 380px;
+    }
+    .step-panel { display: none; animation: fadeSlide 0.4s ease; }
+    .step-panel.visible { display: block; }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* DEAL INFO GRID */
+    .info-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px; margin-bottom: 24px;
+    }
+    .info-card {
+      background: var(--card); border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 16px 18px;
+    }
+    .info-card-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; color: var(--muted);
+      letter-spacing: 0.5px; text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .info-card-value {
+      font-size: 16px; font-weight: 700; color: var(--dark);
+    }
+    .info-card-value.big {
+      font-size: 22px; letter-spacing: -0.5px;
+    }
+    .info-card-value.green { color: var(--green); }
+    .info-card-value.red { color: var(--red); }
+    .info-card-value.blue { color: var(--blue); }
+    .info-card-sub {
+      font-size: 12px; color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* PARTY ROW */
+    .party-row {
+      display: flex; align-items: center; gap: 16px;
+      background: var(--card); border-radius: var(--radius);
+      padding: 16px 20px; margin-bottom: 16px;
+      border: 1px solid var(--border);
+    }
+    .party-avatar {
+      width: 44px; height: 44px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; flex-shrink: 0;
+    }
+    .party-info { flex: 1; }
+    .party-name { font-weight: 700; font-size: 15px; }
+    .party-role { font-size: 12px; color: var(--muted); font-family: 'DM Mono', monospace; }
+    .party-addr {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; color: var(--muted);
+      background: white; border: 1px solid var(--border);
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .arrow-right {
+      color: var(--muted); font-size: 20px; flex-shrink: 0;
+    }
+
+    /* MONEY FLOW */
+    .money-flow {
+      display: flex; align-items: center; gap: 0;
+      margin: 24px 0;
+    }
+    .money-node {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 16px 20px;
+      text-align: center; flex: 1;
+      min-width: 110px;
+    }
+    .money-node-label { font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+    .money-node-value { font-size: 18px; font-weight: 700; }
+    .money-arrow {
+      flex: 0.3; text-align: center;
+      position: relative;
+    }
+    .flow-line {
+      height: 2px; background: var(--border);
+      margin: 0 -4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .flow-line.animated::after {
+      content: '';
+      position: absolute;
+      top: -1px; left: -100%;
+      width: 60%; height: 4px;
+      background: linear-gradient(90deg, transparent, var(--green), transparent);
+      animation: flowAnim 1.5s linear infinite;
+      border-radius: 2px;
+    }
+    .flow-line.animated-red::after {
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+    }
+    @keyframes flowAnim {
+      to { left: 150%; }
+    }
+    .flow-arrow-head {
+      color: var(--muted); font-size: 16px;
+      margin-left: -4px;
+    }
+
+    /* SHIPPING */
+    .shipping-doc {
+      background: white; border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .doc-icon {
+      width: 48px; height: 48px; border-radius: 10px;
+      background: var(--blue-light); color: var(--blue);
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* AI SETTLEMENT */
+    .validators-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 12px; margin-bottom: 24px;
+    }
+    @media (max-width: 600px) {
+      .validators-grid { grid-template-columns: 1fr; }
+    }
+    .validator-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 16px;
+      text-align: center;
+    }
+    .validator-status {
+      display: inline-block;
+      width: 8px; height: 8px; border-radius: 50%;
+      margin-right: 6px;
+    }
+    .v-querying { background: #f59e0b; animation: pulse 1s infinite; }
+    .v-done { background: var(--green); }
+    @keyframes pulse {
+      0%,100% { opacity: 1; } 50% { opacity: 0.4; }
+    }
+    .validator-name {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; color: var(--muted);
+    }
+    .validator-rate {
+      font-size: 20px; font-weight: 700;
+      color: var(--dark); margin: 8px 0 4px;
+    }
+    .validator-source {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px; color: var(--muted);
+    }
+
+    .rate-ticker-box {
+      background: var(--dark); border-radius: var(--radius);
+      padding: 20px 24px; margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 16px;
+    }
+    .ticker-pair {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px; color: #74706c;
+    }
+    .ticker-rate {
+      font-family: 'DM Mono', monospace;
+      font-size: 32px; font-weight: 500;
+      color: #86efac;
+      letter-spacing: -1px;
+    }
+    .ticker-change {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px; padding: 3px 10px;
+      border-radius: 4px;
+    }
+    .ticker-up { background: rgba(34,197,94,0.15); color: #22c55e; }
+    .ticker-down { background: rgba(239,68,68,0.15); color: #ef4444; }
+
+    /* TOLERANCE BAR */
+    .tolerance-section { margin-bottom: 20px; }
+    .tolerance-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; color: var(--muted);
+      margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .tolerance-bar {
+      height: 24px; background: var(--red-light);
+      border-radius: 9999px; position: relative;
+      overflow: hidden;
+    }
+    .tolerance-zone {
+      position: absolute;
+      top: 0; height: 100%;
+      background: var(--green-light);
+      border-radius: 0;
+      transition: all 0.6s;
+    }
+    .tolerance-marker {
+      position: absolute;
+      top: -4px; width: 3px; height: 32px;
+      border-radius: 2px;
+      transition: left 0.8s cubic-bezier(.34,1.56,.64,1);
+    }
+    .tolerance-marker-est { background: var(--muted); }
+    .tolerance-marker-actual { background: var(--green); }
+    .tolerance-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; font-weight: 600;
+      padding: 4px 12px; border-radius: 9999px;
+      margin-top: 10px;
+    }
+    .tolerance-ok { background: var(--green-light); color: var(--green); }
+    .tolerance-fail { background: var(--red-light); color: var(--red); }
+
+    /* SETTLEMENT CALC */
+    .settlement-box {
+      background: #1a1817; border-radius: var(--radius);
+      padding: 20px 24px;
+    }
+    .calc-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+    }
+    .calc-row:last-child { border-bottom: none; }
+    .calc-row .k { color: #74706c; }
+    .calc-row .v { color: #e5e7eb; }
+    .calc-row.total .v {
+      color: #86efac; font-size: 18px; font-weight: 700;
+    }
+    .calc-row.total { padding-top: 14px; }
+
+    /* DEAL COMPLETE */
+    .complete-icon {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--green-light); color: var(--green);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 32px;
+    }
+    .complete-title {
+      text-align: center; font-size: 28px; font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .complete-sub {
+      text-align: center; color: var(--muted); margin-bottom: 28px;
+    }
+
+    /* PLAYBACK CONTROLS */
+    .playback-controls {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 28px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap; gap: 12px;
+    }
+    .playback-left { display: flex; gap: 8px; align-items: center; }
+    .ctrl-btn {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 9999px; padding: 7px 16px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      font-family: 'DM Sans', sans-serif; color: var(--dark);
+      display: flex; align-items: center; gap: 6px;
+      transition: all 0.2s;
+    }
+    .ctrl-btn:hover { background: white; box-shadow: var(--shadow); }
+    .ctrl-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+    .step-counter {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; color: var(--muted);
+    }
+    .progress-pill {
+      display: flex; gap: 4px; align-items: center;
+    }
+    .progress-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--border); transition: background 0.3s;
+    }
+    .progress-dot.done { background: var(--dark); }
+    .progress-dot.active { background: var(--red); width: 18px; border-radius: 9999px; }
+
+    /* ─── DISPUTE ─── */
+    #how-it-works { padding: 80px 0; }
+    .dispute-card {
+      background: var(--card); border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      padding: 32px; margin-bottom: 24px;
+    }
+    .dispute-header {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
+    }
+    .dispute-icon {
+      width: 48px; height: 48px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .dispute-icon.red { background: var(--red-light); color: var(--red); }
+    .dispute-icon.amber { background: var(--amber-light); color: var(--amber); }
+    .dispute-icon.green { background: var(--green-light); color: var(--green); }
+    .dispute-icon.blue { background: var(--blue-light); color: var(--blue); }
+
+    .flow-steps {
+      display: flex; flex-direction: column; gap: 0;
+    }
+    .flow-step {
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .flow-step-line {
+      display: flex; flex-direction: column; align-items: center;
+    }
+    .flow-step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: var(--dark); color: white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0;
+    }
+    .flow-step-vline {
+      width: 2px; background: var(--border);
+      flex: 1; min-height: 24px; margin: 4px 0;
+    }
+    .flow-step-content {
+      padding-bottom: 20px; flex: 1; padding-top: 2px;
+    }
+    .flow-step-title { font-weight: 600; margin-bottom: 4px; }
+    .flow-step-desc { font-size: 14px; color: var(--muted); }
+
+    .verdict-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    }
+    @media (max-width: 600px) { .verdict-grid { grid-template-columns: 1fr; } }
+    .verdict-card {
+      border-radius: var(--radius); padding: 16px;
+      text-align: center; border: 1px solid transparent;
+    }
+    .verdict-card.red { background: var(--red-light); border-color: rgba(220,38,38,0.2); }
+    .verdict-card.green { background: var(--green-light); border-color: rgba(22,163,74,0.2); }
+    .verdict-card.amber { background: var(--amber-light); border-color: rgba(217,119,6,0.2); }
+    .verdict-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 0.5px; margin-bottom: 8px;
+    }
+    .verdict-card.red .verdict-label { color: var(--red); }
+    .verdict-card.green .verdict-label { color: var(--green); }
+    .verdict-card.amber .verdict-label { color: var(--amber); }
+    .verdict-desc { font-size: 13px; color: var(--muted); }
+
+    /* ─── FOREX DEEP DIVE ─── */
+    .forex-section { background: white; padding: 80px 0; }
+    .forex-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    }
+    @media (max-width: 768px) { .forex-grid { grid-template-columns: 1fr; } }
+
+    .validator-flow {
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .validator-row {
+      display: flex; align-items: center; gap: 12px;
+      background: var(--card); border-radius: var(--radius);
+      border: 1px solid var(--border); padding: 12px 16px;
+    }
+    .vr-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: var(--dark); color: #86efac;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .vr-info { flex: 1; }
+    .vr-name { font-size: 13px; font-weight: 600; }
+    .vr-source { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); }
+    .vr-rate { font-family: 'DM Mono', monospace; font-size: 16px; font-weight: 700; color: var(--green); }
+    .consensus-box {
+      background: var(--dark); border-radius: var(--radius);
+      padding: 20px; text-align: center; margin-top: 12px;
+    }
+    .consensus-label { font-family: 'DM Mono', monospace; font-size: 11px; color: #74706c; margin-bottom: 8px; }
+    .consensus-rate { font-family: 'DM Mono', monospace; font-size: 28px; font-weight: 500; color: #86efac; }
+    .consensus-method { font-family: 'DM Mono', monospace; font-size: 11px; color: #74706c; margin-top: 6px; }
+
+    /* ─── CODE ─── */
+    #smart-contract { background: var(--card); padding: 80px 0; }
+    .code-tabs {
+      display: flex; gap: 4px; margin-bottom: 0;
+      background: #2d2927;
+      padding: 12px 16px 0;
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+    .code-tab {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; color: #74706c;
+      padding: 6px 14px; border-radius: 6px 6px 0 0;
+      cursor: pointer; border: 1px solid transparent;
+      border-bottom: none;
+      transition: all 0.2s;
+    }
+    .code-tab.active {
+      background: #1a1817; color: #e5e7eb;
+      border-color: #3d3b39;
+    }
+    .code-block {
+      background: #1a1817;
+      border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+      padding: 28px;
+      overflow-x: auto;
+    }
+    .code-block pre {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px; line-height: 1.85;
+      color: #e5e7eb;
+      white-space: pre;
+    }
+    .py-kw { color: #93c5fd; }
+    .py-fn { color: #86efac; }
+    .py-str { color: #fbbf24; }
+    .py-cm { color: #4b5563; font-style: italic; }
+    .py-num { color: #f9a8d4; }
+    .py-cls { color: #e879f9; }
+    .py-dec { color: #fb923c; }
+    .py-var { color: #e5e7eb; }
+
+    /* ─── HOW IT WORKS STEPS ─── */
+    .steps-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+    .how-step {
+      background: white; border-radius: var(--radius-xl);
+      border: 1px solid var(--border);
+      padding: 24px; position: relative;
+    }
+    .how-step-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 700; color: var(--red);
+      margin-bottom: 14px; letter-spacing: 0.5px;
+    }
+    .how-step-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+    }
+    .how-step-title { font-weight: 700; font-size: 16px; margin-bottom: 8px; }
+    .how-step-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--dark); color: #74706c;
+      padding: 48px 0;
+    }
+    .footer-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      flex-wrap: wrap; gap: 20px;
+    }
+    .footer-logo {
+      font-weight: 700; font-size: 15px; color: white;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a {
+      color: #74706c; text-decoration: none; font-size: 14px;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: white; }
+    .footer-copy {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px; color: #4b5563;
+    }
+
+    /* ─── UTILITIES ─── */
+    .tag {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px; font-weight: 600;
+      padding: 3px 10px; border-radius: 9999px;
+      letter-spacing: 0.3px;
+    }
+    .tag-green { background: var(--green-light); color: var(--green); }
+    .tag-red { background: var(--red-light); color: var(--red); }
+    .tag-blue { background: var(--blue-light); color: var(--blue); }
+    .tag-amber { background: var(--amber-light); color: var(--amber); }
+    .tag-dark { background: rgba(255,255,255,0.08); color: #e5e7eb; }
+
+    .divider {
+      height: 1px; background: var(--border);
+      margin: 28px 0;
+    }
+    .text-muted { color: var(--muted); }
+    .text-sm { font-size: 14px; }
+    .font-mono { font-family: 'DM Mono', monospace; }
+    .bold { font-weight: 700; }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .gap-2 { gap: 8px; }
+    .gap-3 { gap: 12px; }
+    .mt-2 { margin-top: 8px; }
+    .mt-3 { margin-top: 12px; }
+    .mt-4 { margin-top: 16px; }
+    .mb-2 { margin-bottom: 8px; }
+    .mb-3 { margin-bottom: 12px; }
+    .mb-4 { margin-bottom: 16px; }
+
+    /* Animated counting numbers */
+    .count-up { display: inline; }
+
+    /* Scanning animation for validators */
+    @keyframes scan {
+      from { width: 0%; }
+      to { width: 100%; }
+    }
+    .scan-bar {
+      height: 3px; background: var(--border); border-radius: 2px;
+      margin-top: 6px; overflow: hidden;
+    }
+    .scan-fill {
+      height: 100%; background: var(--green);
+      border-radius: 2px;
+      animation: scan 1.8s ease forwards;
+    }
+    .scan-fill.v2 { animation-delay: 0.4s; width: 0; }
+    .scan-fill.v3 { animation-delay: 0.8s; width: 0; }
+
+    /* Glow for complete state */
+    @keyframes completePulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(22,163,74,0.3); }
+      50% { box-shadow: 0 0 0 12px rgba(22,163,74,0); }
+    }
+    .complete-glow { animation: completePulse 2s ease infinite; }
+
+    /* Number tick animation */
+    @keyframes numTick { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    .num-tick { animation: numTick 0.15s ease; }
+
+    @media (max-width: 768px) {
+      .header-inner { padding: 10px 16px; }
+      nav { display: none; }
+      .hero { padding: 70px 0 60px; }
+      .step-label { display: none; }
+      .stepper { gap: 0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <span class="logo-badge">TF</span>
+      Trade Finance
+      <span class="logo-x">×</span>
+      <span style="color:var(--red)">GenLayer</span>
+    </a>
+    <nav>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#live-demo">Live Demo</a>
+      <a href="#smart-contract">Smart Contract</a>
+    </nav>
+    <a href="#live-demo" class="btn-primary">
+      <span>Try Demo</span>
+      <i data-lucide="arrow-right" style="width:14px;height:14px"></i>
+    </a>
+  </div>
+</header>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-tag">
+      <i data-lucide="zap" style="width:12px;height:12px"></i>
+      Powered by GenLayer AI Validators
+    </div>
+    <h1>AI-Powered<br/><span>Trade Finance</span> Settlement</h1>
+    <p class="hero-sub">
+      Exporters and importers settle cross-border deals with AI-validated forex rates.
+      Smart contracts handle escrow, delivery verification, and dispute resolution — on GenLayer.
+    </p>
+    <div class="hero-actions">
+      <a href="#live-demo" class="btn-primary" style="padding:12px 24px;font-size:15px">
+        <i data-lucide="play" style="width:16px;height:16px"></i>
+        Watch Live Demo
+      </a>
+      <a href="#smart-contract" class="btn-secondary" style="padding:12px 24px;font-size:15px">
+        <i data-lucide="code-2" style="width:16px;height:16px"></i>
+        View Contract
+      </a>
+    </div>
+    <div class="terminal">
+      <div class="terminal-bar">
+        <div class="dot dot-r"></div>
+        <div class="dot dot-y"></div>
+        <div class="dot dot-g"></div>
+        <span class="terminal-title">TradeFinanceDeal.py — genlayer</span>
+      </div>
+      <div class="terminal-body" id="terminal-body">
+        <div><span class="comment"># Deploy trade finance smart contract to GenLayer</span></div>
+        <div><span class="cmd">$ genlayer deploy TradeFinanceDeal.py</span></div>
+        <div id="deploy-line-1" style="opacity:0;transition:opacity 0.4s"><span class="key">✓ Compiling</span> <span class="str">TradeFinanceDeal.py</span> <span class="comment">→ intelligent contract</span></div>
+        <div id="deploy-line-2" style="opacity:0;transition:opacity 0.4s"><span class="key">✓ Uploading</span> <span class="comment">to GenLayer testnet...</span></div>
+        <div id="deploy-line-3" style="opacity:0;transition:opacity 0.4s"><span class="key">✓ Contract deployed</span> at <span class="val">0x7f3a...b2e9</span></div>
+        <div id="deploy-line-4" style="opacity:0;transition:opacity 0.4s"><span class="comment">  Validators: </span><span class="str">5 AI nodes</span><span class="comment"> ready for consensus</span></div>
+        <div id="deploy-line-5" style="opacity:0;transition:opacity 0.4s"><span class="cmd">$ </span><span class="terminal-cursor"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section id="how-it-works" class="section" style="background:var(--card)">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">How It Works</div>
+      <div class="section-title">Six steps. Zero trust required.</div>
+      <p class="section-sub">The entire deal lifecycle is governed by the smart contract. No intermediaries, no disputes about rates.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="how-step">
+        <div class="how-step-num">01 —</div>
+        <div class="how-step-icon" style="background:var(--blue-light);color:var(--blue)">
+          <i data-lucide="file-plus" style="width:22px;height:22px"></i>
+        </div>
+        <div class="how-step-title">Create Deal</div>
+        <div class="how-step-desc">Exporter deploys contract with deal terms: currencies, estimated rate, tolerance, and goods description.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">02 —</div>
+        <div class="how-step-icon" style="background:var(--green-light);color:var(--green)">
+          <i data-lucide="lock" style="width:22px;height:22px"></i>
+        </div>
+        <div class="how-step-title">Fund Escrow</div>
+        <div class="how-step-desc">Importer locks USD funds in the smart contract. Money is safe — only released on delivery + rate validation.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">03 —</div>
+        <div class="how-step-icon" style="background:var(--amber-light);color:var(--amber)">
+          <i data-lucide="package" style="width:22px;height:22px"></i>
+        </div>
+        <div class="how-step-title">Ship Goods</div>
+        <div class="how-step-desc">Exporter submits shipping proof (bill of lading hash). Contract moves to awaiting delivery confirmation.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">04 —</div>
+        <div class="how-step-icon" style="background:var(--blue-light);color:var(--blue)">
+          <i data-lucide="check-circle" style="width:22px;height:22px"></i>
+        </div>
+        <div class="how-step-title">Confirm Delivery</div>
+        <div class="how-step-desc">Importer confirms receipt of goods. This triggers the AI forex settlement process.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">05 —</div>
+        <div class="how-step-icon" style="background:var(--red-light);color:var(--red)">
+          <i data-lucide="cpu" style="width:22px;height:22px"></i>
+        </div>
+        <div class="how-step-title">AI Forex Settlement</div>
+        <div class="how-step-desc">GenLayer validators fetch live rates from multiple APIs and reach consensus. Settlement is automatic and trustless.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-step-num">06 —</div>
+        <div class="how-step-icon" style="background:var(--green-light);color:var(--green)">
+          <i data-lucide="banknote" style="width:22px;height:22px"></i>
+        </div>
+        <div class="how-step-title">Deal Complete</div>
+        <div class="how-step-desc">Exact USD amount released to exporter. Difference (if any) returned to importer. All on-chain, all transparent.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── LIVE DEMO ─── -->
+<section id="live-demo" class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Live Demo</div>
+      <div class="section-title">Watch a real deal settle</div>
+      <p class="section-sub">¥50,000,000 electronics shipment from Japan to the US. Follow each step in real time.</p>
+    </div>
+
+    <div class="deal-card">
+      <!-- Card Header -->
+      <div class="deal-card-header" style="background:var(--dark);padding:20px 28px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+        <div>
+          <div class="deal-id">deal_0x7f3a...b2e9</div>
+          <div style="color:#e5e7eb;font-weight:600;margin-top:4px;font-size:15px">TanakaTech → Horizon Electronics USA</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="tag tag-dark font-mono" style="font-size:10px">BLOCK #4,721,088</span>
+          <span class="deal-status-badge status-pending" id="status-badge">PENDING</span>
+        </div>
+      </div>
+
+      <!-- Stepper -->
+      <div class="stepper" id="stepper">
+        <!-- Steps injected by JS -->
+      </div>
+
+      <!-- Step Content -->
+      <div class="step-content-area" id="step-content">
+        <!-- Injected by JS -->
+      </div>
+
+      <!-- Controls -->
+      <div class="playback-controls">
+        <div class="playback-left">
+          <button class="ctrl-btn" id="btn-prev" onclick="prevStep()">
+            <i data-lucide="chevron-left" style="width:14px;height:14px"></i>Prev
+          </button>
+          <button class="ctrl-btn active" id="btn-play" onclick="togglePlay()">
+            <i data-lucide="pause" style="width:14px;height:14px" id="play-icon"></i>
+            <span id="play-label">Pause</span>
+          </button>
+          <button class="ctrl-btn" id="btn-next" onclick="nextStep()">
+            Next<i data-lucide="chevron-right" style="width:14px;height:14px"></i>
+          </button>
+          <button class="ctrl-btn" onclick="restartDemo()" style="margin-left:4px">
+            <i data-lucide="rotate-ccw" style="width:14px;height:14px"></i>Replay
+          </button>
+        </div>
+        <div style="display:flex;align-items:center;gap:16px">
+          <div class="progress-pill" id="progress-pill"></div>
+          <div class="step-counter" id="step-counter">Step 1 of 6</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── DISPUTE PATH ─── -->
+<section style="background:var(--card);padding:80px 0">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Dispute Resolution</div>
+      <div class="section-title">If something goes wrong…</div>
+      <p class="section-sub">Either party can raise a dispute. An AI jury evaluates the evidence and delivers a binding verdict.</p>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px" class="dispute-grid">
+      <div class="dispute-card">
+        <div class="dispute-header">
+          <div class="dispute-icon red">
+            <i data-lucide="alert-triangle" style="width:22px;height:22px"></i>
+          </div>
+          <div>
+            <div style="font-weight:700;font-size:16px">How Disputes Work</div>
+            <div style="font-size:13px;color:var(--muted)">AI-mediated, evidence-based</div>
+          </div>
+        </div>
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step-line">
+              <div class="flow-step-num">1</div>
+              <div class="flow-step-vline"></div>
+            </div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">Raise Dispute</div>
+              <div class="flow-step-desc">Either party calls <span class="font-mono" style="font-size:12px;background:white;padding:1px 6px;border-radius:4px;border:1px solid var(--border)">raise_dispute(reason)</span> with evidence hash.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-line">
+              <div class="flow-step-num">2</div>
+              <div class="flow-step-vline"></div>
+            </div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">Evidence Submission</div>
+              <div class="flow-step-desc">Both parties submit documents, photos, tracking data, and communication logs on-chain.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-line">
+              <div class="flow-step-num">3</div>
+              <div class="flow-step-vline"></div>
+            </div>
+            <div class="flow-step-content">
+              <div class="flow-step-title">AI Jury Evaluation</div>
+              <div class="flow-step-desc">5 GenLayer validator nodes independently analyze evidence and vote on the outcome.</div>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step-line">
+              <div class="flow-step-num">4</div>
+            </div>
+            <div class="flow-step-content" style="padding-bottom:0">
+              <div class="flow-step-title">Binding Verdict</div>
+              <div class="flow-step-desc">Supermajority verdict automatically executes fund release. No court needed.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="dispute-card" style="margin-bottom:24px">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:16px">Possible Verdicts</div>
+          <div class="verdict-grid">
+            <div class="verdict-card green">
+              <div class="verdict-label">EXPORTER_WINS</div>
+              <div class="verdict-desc">Full escrow released to exporter</div>
+            </div>
+            <div class="verdict-card red">
+              <div class="verdict-label">IMPORTER_WINS</div>
+              <div class="verdict-desc">Escrow refunded to importer</div>
+            </div>
+            <div class="verdict-card amber">
+              <div class="verdict-label">SPLIT</div>
+              <div class="verdict-desc">Custom ratio based on fault</div>
+            </div>
+          </div>
+        </div>
+        <div class="dispute-card" style="margin-bottom:0">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:16px">Common Dispute Reasons</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+              <i data-lucide="package-x" style="width:16px;height:16px;color:var(--red);flex-shrink:0"></i>
+              <span style="font-size:13px">Goods not received / damaged</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+              <i data-lucide="trending-down" style="width:16px;height:16px;color:var(--amber);flex-shrink:0"></i>
+              <span style="font-size:13px">Rate outside agreed tolerance</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+              <i data-lucide="clock" style="width:16px;height:16px;color:var(--blue);flex-shrink:0"></i>
+              <span style="font-size:13px">Late delivery past deadline</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px;background:white;border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+              <i data-lucide="file-x" style="width:16px;height:16px;color:var(--muted);flex-shrink:0"></i>
+              <span style="font-size:13px">Invalid / fraudulent documents</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOREX DEEP DIVE ─── -->
+<section class="forex-section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Forex Settlement</div>
+      <div class="section-title">AI consensus on exchange rates</div>
+      <p class="section-sub">No trusted oracle. Each GenLayer validator independently fetches the rate and the network reaches consensus via optimistic execution.</p>
+    </div>
+
+    <div class="forex-grid">
+      <!-- Live Rate Ticker -->
+      <div>
+        <div class="rate-ticker-box" id="live-ticker">
+          <div>
+            <div class="ticker-pair">JPY / USD · SPOT</div>
+            <div class="ticker-rate" id="live-rate">0.006623</div>
+            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+              <span class="ticker-change ticker-up" id="ticker-change">▲ +0.0003 (+0.05%)</span>
+              <span class="tag tag-dark" style="font-size:10px">LIVE SIMULATED</span>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <div class="tag tag-dark font-mono" style="margin-bottom:8px;display:block;text-align:right">¥1 = $<span id="rate-small">0.006623</span></div>
+            <div class="tag tag-dark font-mono" style="display:block;text-align:right">$1 = ¥<span id="inverse-rate">150.96</span></div>
+          </div>
+        </div>
+
+        <!-- Tolerance Visualization -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:20px">
+          <div class="tolerance-label">Rate Tolerance Band (± 50 basis points)</div>
+          <div style="display:flex;justify-content:space-between;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);margin-bottom:8px">
+            <span>0.006555 (−50bps)</span>
+            <span>EST: 0.006600</span>
+            <span>0.006633 (+50bps)</span>
+          </div>
+          <div class="tolerance-bar" id="tol-bar">
+            <div class="tolerance-zone" id="tol-zone" style="left:20%;width:60%"></div>
+            <div class="tolerance-marker tolerance-marker-est" id="tol-est" style="left:50%"></div>
+            <div class="tolerance-marker tolerance-marker-actual" id="tol-actual" style="left:55%"></div>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap">
+            <div class="tolerance-badge tolerance-ok" id="tol-badge">
+              <i data-lucide="check-circle" style="width:12px;height:12px"></i>
+              Within Tolerance
+            </div>
+            <div style="display:flex;gap:16px;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);align-items:center">
+              <span>⬜ Estimated: 0.006600</span>
+              <span style="color:var(--green)">■ Actual: <span id="tol-actual-val">0.006623</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Rate History Mini-Chart -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+          <div class="tolerance-label" style="margin-bottom:12px">24h Rate History (JPY/USD)</div>
+          <canvas id="rate-chart" width="400" height="80" style="width:100%;height:80px"></canvas>
+        </div>
+      </div>
+
+      <!-- Validator Consensus -->
+      <div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px">AI Validator Consensus</div>
+        <div class="validator-flow">
+          <div class="validator-row">
+            <div class="vr-icon">V1</div>
+            <div class="vr-info">
+              <div class="vr-name">Validator Alpha</div>
+              <div class="vr-source">→ openexchangerates.org</div>
+              <div class="scan-bar"><div class="scan-fill"></div></div>
+            </div>
+            <div class="vr-rate">0.006621</div>
+          </div>
+          <div class="validator-row">
+            <div class="vr-icon">V2</div>
+            <div class="vr-info">
+              <div class="vr-name">Validator Beta</div>
+              <div class="vr-source">→ exchangerate-api.com</div>
+              <div class="scan-bar"><div class="scan-fill v2"></div></div>
+            </div>
+            <div class="vr-rate">0.006625</div>
+          </div>
+          <div class="validator-row">
+            <div class="vr-icon">V3</div>
+            <div class="vr-info">
+              <div class="vr-name">Validator Gamma</div>
+              <div class="vr-source">→ fixer.io</div>
+              <div class="scan-bar"><div class="scan-fill v3"></div></div>
+            </div>
+            <div class="vr-rate">0.006622</div>
+          </div>
+          <div class="validator-row">
+            <div class="vr-icon">V4</div>
+            <div class="vr-info">
+              <div class="vr-name">Validator Delta</div>
+              <div class="vr-source">→ currencylayer.com</div>
+              <div class="scan-bar"><div class="scan-fill" style="animation-delay:1.2s;width:0"></div></div>
+            </div>
+            <div class="vr-rate">0.006624</div>
+          </div>
+          <div class="validator-row">
+            <div class="vr-icon">V5</div>
+            <div class="vr-info">
+              <div class="vr-name">Validator Epsilon</div>
+              <div class="vr-source">→ coinbase.com/api</div>
+              <div class="scan-bar"><div class="scan-fill" style="animation-delay:1.6s;width:0"></div></div>
+            </div>
+            <div class="vr-rate">0.006623</div>
+          </div>
+        </div>
+        <div class="consensus-box">
+          <div class="consensus-label">CONSENSUS RATE (MEDIAN)</div>
+          <div class="consensus-rate">¥1 = $0.006623</div>
+          <div class="consensus-method">Optimistic Execution · 5/5 validators agree</div>
+        </div>
+        <div style="margin-top:16px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:12px">Settlement Calculation</div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px">
+            <span style="color:var(--muted)">Invoice Amount</span>
+            <span class="font-mono bold">¥50,000,000</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px">
+            <span style="color:var(--muted)">Consensus Rate</span>
+            <span class="font-mono bold">× 0.006623</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px">
+            <span style="color:var(--muted)">Escrowed (at est.)</span>
+            <span class="font-mono bold">$330,000.00</span>
+          </div>
+          <div style="height:1px;background:var(--border);margin:10px 0"></div>
+          <div style="display:flex;justify-content:space-between;font-size:15px">
+            <span class="bold">Settlement Due</span>
+            <span class="font-mono bold" style="color:var(--green)">$331,150.00</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;margin-top:4px">
+            <span style="color:var(--muted)">Difference returned</span>
+            <span class="font-mono" style="color:var(--muted)">−$1,150.00 → importer</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SMART CONTRACT ─── -->
+<section id="smart-contract">
+  <div class="container">
+    <div class="section-header" style="margin-bottom:32px">
+      <div class="section-label">Smart Contract</div>
+      <div class="section-title">The code that runs the deal</div>
+      <p class="section-sub">Intelligent contracts on GenLayer can call external APIs and run LLM logic. Here's how forex settlement and dispute resolution work.</p>
+    </div>
+
+    <div class="code-tabs">
+      <div class="code-tab active" onclick="showTab('settle')">settle()</div>
+      <div class="code-tab" onclick="showTab('dispute')">resolve_dispute()</div>
+      <div class="code-tab" onclick="showTab('create')">__init__()</div>
+    </div>
+    <div class="code-block">
+      <pre id="code-settle"><span class="py-dec">@gl.public.write</span>
+<span class="py-kw">def</span> <span class="py-fn">settle</span>(<span class="py-var">self</span>) -> <span class="py-var">None</span>:
+    <span class="py-cm">"""AI-powered forex settlement. Called by importer after delivery."""</span>
+    <span class="py-kw">assert</span> <span class="py-var">self</span>.status == <span class="py-str">"DELIVERY_CONFIRMED"</span>, <span class="py-str">"Wrong status"</span>
+    <span class="py-kw">assert</span> gl.message.sender == <span class="py-var">self</span>.importer, <span class="py-str">"Only importer"</span>
+
+    <span class="py-cm"># Each validator independently fetches the forex rate</span>
+    rate = <span class="py-var">self</span>.<span class="py-fn">_fetch_consensus_rate</span>(
+        base=<span class="py-var">self</span>.invoice_currency,   <span class="py-cm"># "JPY"</span>
+        quote=<span class="py-var">self</span>.settlement_currency  <span class="py-cm"># "USD"</span>
+    )
+
+    <span class="py-cm"># Check rate is within agreed tolerance (basis points)</span>
+    deviation = <span class="py-fn">abs</span>(rate - <span class="py-var">self</span>.estimated_rate) / <span class="py-var">self</span>.estimated_rate
+    <span class="py-kw">if</span> deviation > <span class="py-var">self</span>.tolerance_bps / <span class="py-num">10000</span>:
+        <span class="py-var">self</span>.status = <span class="py-str">"RATE_DISPUTE"</span>
+        <span class="py-kw">return</span>
+
+    <span class="py-cm"># Calculate exact settlement amount</span>
+    settlement_usd = <span class="py-var">self</span>.invoice_jpy * rate
+    difference = <span class="py-var">self</span>.escrowed_usd - settlement_usd
+
+    <span class="py-cm"># Release funds</span>
+    gl.transfer(<span class="py-var">self</span>.exporter, settlement_usd)
+    <span class="py-kw">if</span> difference > <span class="py-num">0</span>:
+        gl.transfer(<span class="py-var">self</span>.importer, difference)  <span class="py-cm"># return excess</span>
+
+    <span class="py-var">self</span>.final_rate = rate
+    <span class="py-var">self</span>.settlement_usd = settlement_usd
+    <span class="py-var">self</span>.status = <span class="py-str">"COMPLETED"</span>
+
+
+<span class="py-dec">@gl.public.write</span>
+<span class="py-kw">def</span> <span class="py-fn">_fetch_consensus_rate</span>(<span class="py-var">self</span>, base: <span class="py-cls">str</span>, quote: <span class="py-cls">str</span>) -> <span class="py-cls">float</span>:
+    <span class="py-cm">"""Validators each call this independently. GenLayer's optimistic</span>
+<span class="py-cm">    execution ensures consensus on the result."""</span>
+    result = gl.exec_prompt(
+        f<span class="py-str">"Fetch the current spot exchange rate for {base}/{quote} "</span>
+        <span class="py-str">"from a reliable financial API. Return only the numeric rate."</span>
+    )
+    <span class="py-kw">return</span> <span class="py-cls">float</span>(result.strip())</pre>
+
+      <pre id="code-dispute" style="display:none"><span class="py-dec">@gl.public.write</span>
+<span class="py-kw">def</span> <span class="py-fn">resolve_dispute</span>(<span class="py-var">self</span>) -> <span class="py-var">None</span>:
+    <span class="py-cm">"""AI jury evaluates evidence and delivers binding verdict."""</span>
+    <span class="py-kw">assert</span> <span class="py-var">self</span>.status == <span class="py-str">"DISPUTED"</span>, <span class="py-str">"Not in dispute"</span>
+
+    <span class="py-cm"># Build evidence context for the AI jury</span>
+    evidence_ctx = {
+        <span class="py-str">"deal_terms"</span>:       <span class="py-var">self</span>.deal_terms,
+        <span class="py-str">"exporter_evidence"</span>: <span class="py-var">self</span>.exporter_evidence,
+        <span class="py-str">"importer_evidence"</span>: <span class="py-var">self</span>.importer_evidence,
+        <span class="py-str">"shipping_docs"</span>:     <span class="py-var">self</span>.bill_of_lading_hash,
+        <span class="py-str">"dispute_reason"</span>:    <span class="py-var">self</span>.dispute_reason,
+        <span class="py-str">"timeline"</span>:          <span class="py-var">self</span>.get_timeline(),
+    }
+
+    <span class="py-cm"># Each validator independently evaluates and votes</span>
+    verdict = gl.exec_prompt(
+        <span class="py-str">"""You are an impartial trade finance arbitrator.
+Review the evidence and return one of:
+- EXPORTER_WINS: exporter fulfilled obligations
+- IMPORTER_WINS: goods not delivered or misrepresented
+- SPLIT:X: split escrowed funds with X% to exporter
+
+Evidence: """</span> + json.dumps(evidence_ctx),
+        output_type=<span class="py-cls">Literal</span>[<span class="py-str">"EXPORTER_WINS"</span>, <span class="py-str">"IMPORTER_WINS"</span>, <span class="py-str">"SPLIT"</span>]
+    )
+
+    <span class="py-cm"># Execute verdict automatically</span>
+    <span class="py-kw">if</span> verdict == <span class="py-str">"EXPORTER_WINS"</span>:
+        gl.transfer(<span class="py-var">self</span>.exporter, <span class="py-var">self</span>.escrowed_usd)
+    <span class="py-kw">elif</span> verdict == <span class="py-str">"IMPORTER_WINS"</span>:
+        gl.transfer(<span class="py-var">self</span>.importer, <span class="py-var">self</span>.escrowed_usd)
+    <span class="py-kw">else</span>:  <span class="py-cm"># SPLIT</span>
+        exporter_share = verdict.split(<span class="py-str">":"</span>)[<span class="py-num">1</span>]
+        gl.transfer(<span class="py-var">self</span>.exporter, <span class="py-var">self</span>.escrowed_usd * exporter_share / <span class="py-num">100</span>)
+        gl.transfer(<span class="py-var">self</span>.importer, <span class="py-var">self</span>.escrowed_usd * (<span class="py-num">1</span> - exporter_share / <span class="py-num">100</span>))
+
+    <span class="py-var">self</span>.verdict = verdict
+    <span class="py-var">self</span>.status = <span class="py-str">"RESOLVED"</span></pre>
+
+      <pre id="code-create" style="display:none"><span class="py-kw">from</span> genlayer <span class="py-kw">import</span> gl, Literal
+<span class="py-kw">import</span> json
+
+<span class="py-kw">class</span> <span class="py-cls">TradeFinanceDeal</span>(gl.Contract):
+    <span class="py-cm">"""
+    Intelligent Trade Finance Contract on GenLayer.
+    Handles cross-border deals with AI-validated forex settlement
+    and dispute resolution.
+    """</span>
+
+    <span class="py-cm"># Deal state</span>
+    status: <span class="py-cls">str</span>
+    exporter: <span class="py-cls">str</span>
+    importer: <span class="py-cls">str</span>
+    invoice_jpy: <span class="py-cls">int</span>
+    invoice_currency: <span class="py-cls">str</span>
+    settlement_currency: <span class="py-cls">str</span>
+    estimated_rate: <span class="py-cls">float</span>
+    tolerance_bps: <span class="py-cls">int</span>      <span class="py-cm"># e.g. 50 = ±0.5%</span>
+    escrowed_usd: <span class="py-cls">float</span>
+    bill_of_lading_hash: <span class="py-cls">str</span>
+    final_rate: <span class="py-cls">float</span>
+    settlement_usd: <span class="py-cls">float</span>
+
+    <span class="py-kw">def</span> <span class="py-fn">__init__</span>(
+        <span class="py-var">self</span>,
+        importer: <span class="py-cls">str</span>,
+        invoice_jpy: <span class="py-cls">int</span>,
+        estimated_rate: <span class="py-cls">float</span>,
+        tolerance_bps: <span class="py-cls">int</span> = <span class="py-num">50</span>,
+        goods_description: <span class="py-cls">str</span> = <span class="py-str">""</span>,
+    ):
+        <span class="py-var">self</span>.exporter = gl.message.sender
+        <span class="py-var">self</span>.importer = importer
+        <span class="py-var">self</span>.invoice_jpy = invoice_jpy
+        <span class="py-var">self</span>.invoice_currency = <span class="py-str">"JPY"</span>
+        <span class="py-var">self</span>.settlement_currency = <span class="py-str">"USD"</span>
+        <span class="py-var">self</span>.estimated_rate = estimated_rate
+        <span class="py-var">self</span>.tolerance_bps = tolerance_bps
+        <span class="py-var">self</span>.goods_description = goods_description
+        <span class="py-var">self</span>.status = <span class="py-str">"PENDING"</span>
+
+    <span class="py-dec">@gl.public.write</span>
+    <span class="py-kw">def</span> <span class="py-fn">fund_escrow</span>(<span class="py-var">self</span>) -> <span class="py-var">None</span>:
+        <span class="py-kw">assert</span> gl.message.sender == <span class="py-var">self</span>.importer
+        <span class="py-kw">assert</span> <span class="py-var">self</span>.status == <span class="py-str">"PENDING"</span>
+        <span class="py-var">self</span>.escrowed_usd = gl.message.value  <span class="py-cm"># USD locked in contract</span>
+        <span class="py-var">self</span>.status = <span class="py-str">"FUNDED"</span>
+
+    <span class="py-dec">@gl.public.write</span>
+    <span class="py-kw">def</span> <span class="py-fn">submit_shipping</span>(<span class="py-var">self</span>, bol_hash: <span class="py-cls">str</span>) -> <span class="py-var">None</span>:
+        <span class="py-kw">assert</span> gl.message.sender == <span class="py-var">self</span>.exporter
+        <span class="py-kw">assert</span> <span class="py-var">self</span>.status == <span class="py-str">"FUNDED"</span>
+        <span class="py-var">self</span>.bill_of_lading_hash = bol_hash
+        <span class="py-var">self</span>.status = <span class="py-str">"SHIPPED"</span>
+
+    <span class="py-dec">@gl.public.write</span>
+    <span class="py-kw">def</span> <span class="py-fn">confirm_delivery</span>(<span class="py-var">self</span>) -> <span class="py-var">None</span>:
+        <span class="py-kw">assert</span> gl.message.sender == <span class="py-var">self</span>.importer
+        <span class="py-kw">assert</span> <span class="py-var">self</span>.status == <span class="py-str">"SHIPPED"</span>
+        <span class="py-var">self</span>.status = <span class="py-str">"DELIVERY_CONFIRMED"</span></pre>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-logo">
+          <span style="background:var(--red);color:white;border-radius:6px;padding:2px 7px;font-size:11px;font-family:'DM Mono',monospace">TF</span>
+          Trade Finance × GenLayer
+        </div>
+        <div class="footer-copy" style="margin-top:8px">An intelligent contract prototype on GenLayer</div>
+      </div>
+      <div class="footer-links">
+        <a href="https://genlayer.com" target="_blank">GenLayer</a>
+        <a href="https://docs.genlayer.com" target="_blank">Docs</a>
+        <a href="https://internetcourt.org" target="_blank">InternetCourt</a>
+        <a href="#live-demo">Try Demo</a>
+      </div>
+    </div>
+    <div style="margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06)">
+      <div class="footer-copy">Powered by <a href="https://genlayer.com" style="color:#74706c;text-decoration:underline">GenLayer</a> — The AI-native blockchain. Built for the future of intelligent contracts.</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── INIT LUCIDE ───
+lucide.createIcons();
+
+// ─── TERMINAL ANIMATION ───
+setTimeout(() => {
+  ['deploy-line-1','deploy-line-2','deploy-line-3','deploy-line-4','deploy-line-5'].forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (el) el.style.opacity = '1';
+    }, i * 600);
+  });
+}, 800);
+
+// ─── CODE TABS ───
+function showTab(tab) {
+  document.querySelectorAll('.code-tab').forEach(t => t.classList.remove('active'));
+  ['settle','dispute','create'].forEach(t => {
+    const el = document.getElementById('code-' + t);
+    if (el) el.style.display = 'none';
+  });
+  const active = document.getElementById('code-' + tab);
+  if (active) active.style.display = 'block';
+  event.target.classList.add('active');
+}
+
+// ─── DEAL FLOW ───
+const STEPS = [
+  { label: 'Create Deal', status: 'PENDING', statusClass: 'status-pending' },
+  { label: 'Fund Escrow', status: 'FUNDED', statusClass: 'status-active' },
+  { label: 'Ship Goods', status: 'SHIPPED', statusClass: 'status-active' },
+  { label: 'Confirm Delivery', status: 'CONFIRMED', statusClass: 'status-active' },
+  { label: 'AI Settlement', status: 'SETTLING', statusClass: 'status-active' },
+  { label: 'Complete', status: 'COMPLETED', statusClass: 'status-complete' },
+];
+
+let currentStep = 0;
+let isPlaying = true;
+let playTimer = null;
+
+function buildStepper() {
+  const el = document.getElementById('stepper');
+  el.innerHTML = '';
+  STEPS.forEach((step, i) => {
+    if (i > 0) {
+      const conn = document.createElement('div');
+      conn.className = 'step-connector' + (i <= currentStep ? ' active' : '');
+      conn.id = 'conn-' + i;
+      el.appendChild(conn);
+    }
+    const item = document.createElement('div');
+    item.className = 'step-item' + (i < currentStep ? ' done' : '') + (i === currentStep ? ' active' : '');
+    item.onclick = () => goToStep(i);
+    item.innerHTML = `
+      <div class="step-dot">${i < currentStep ? '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : (i+1)}</div>
+      <div class="step-label">${step.label}</div>
+    `;
+    el.appendChild(item);
+  });
+}
+
+function updateStepper() {
+  const items = document.querySelectorAll('.step-item');
+  items.forEach((item, i) => {
+    item.className = 'step-item' + (i < currentStep ? ' done' : '') + (i === currentStep ? ' active' : '');
+    const dot = item.querySelector('.step-dot');
+    if (i < currentStep) {
+      dot.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+    } else {
+      dot.innerHTML = String(i + 1);
+    }
+  });
+  const conns = document.querySelectorAll('.step-connector');
+  conns.forEach((c, i) => {
+    c.className = 'step-connector' + (i + 1 <= currentStep ? ' active' : '');
+  });
+
+  // Update status badge
+  const badge = document.getElementById('status-badge');
+  badge.textContent = STEPS[currentStep].status;
+  badge.className = 'deal-status-badge ' + STEPS[currentStep].statusClass;
+
+  // Update progress
+  const pill = document.getElementById('progress-pill');
+  pill.innerHTML = STEPS.map((_, i) => 
+    `<div class="progress-dot ${i < currentStep ? 'done' : ''} ${i === currentStep ? 'active' : ''}"></div>`
+  ).join('');
+  document.getElementById('step-counter').textContent = `Step ${currentStep + 1} of ${STEPS.length}`;
+}
+
+const STEP_CONTENT = [
+  // Step 0: Create Deal
+  () => `
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:17px">Deal Created</div>
+          <div style="font-size:13px;color:var(--muted)">Exporter deploys the intelligent contract with deal terms</div>
+        </div>
+      </div>
+
+      <div class="party-row">
+        <div class="party-avatar" style="background:#fef3c7">🏭</div>
+        <div class="party-info">
+          <div class="party-name">TanakaTech Electronics</div>
+          <div class="party-role">EXPORTER · OSAKA, JAPAN</div>
+        </div>
+        <span class="party-addr">0x4f2a...e8b1</span>
+      </div>
+      <div class="flex items-center gap-2 mb-2" style="justify-content:center;color:var(--muted)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+      </div>
+      <div class="party-row" style="margin-bottom:20px">
+        <div class="party-avatar" style="background:#dbeafe">🏢</div>
+        <div class="party-info">
+          <div class="party-name">Horizon Electronics USA</div>
+          <div class="party-role">IMPORTER · SAN JOSE, CA</div>
+        </div>
+        <span class="party-addr">0x9c1b...f4a2</span>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-label">Invoice Amount</div>
+          <div class="info-card-value big">¥50,000,000</div>
+          <div class="info-card-sub">50M Japanese Yen</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Settlement Currency</div>
+          <div class="info-card-value big">USD</div>
+          <div class="info-card-sub">US Dollar</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Estimated Rate</div>
+          <div class="info-card-value">¥1 = $0.006600</div>
+          <div class="info-card-sub">Est. $330,000 total</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Rate Tolerance</div>
+          <div class="info-card-value">±50 bps</div>
+          <div class="info-card-sub">0.5% deviation allowed</div>
+        </div>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;gap:12px;align-items:flex-start">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" style="color:var(--muted);margin-top:2px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+        <div>
+          <div style="font-weight:600;font-size:14px;margin-bottom:2px">Goods Description</div>
+          <div style="font-size:13px;color:var(--muted)">3,500 units — TanakaTech TX-9 Industrial Microcontrollers (automotive grade). HS Code: 8542.31. Shipped in 14 pallets.</div>
+        </div>
+      </div>
+    </div>
+  `,
+
+  // Step 1: Fund Escrow
+  () => `
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--green-light);color:var(--green);display:flex;align-items:center;justify-content:center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:17px">Escrow Funded</div>
+          <div style="font-size:13px;color:var(--muted)">Importer locks $330,000 USD in the smart contract</div>
+        </div>
+      </div>
+
+      <div class="money-flow mb-4">
+        <div class="money-node">
+          <div class="money-node-label">Horizon USA</div>
+          <div class="money-node-value" style="color:var(--dark)">$330,000</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace">WALLET</div>
+        </div>
+        <div class="money-arrow" style="flex:0.4">
+          <div class="flow-line animated" style="background:var(--green);height:3px;border-radius:2px;margin:0"></div>
+          <div style="text-align:center;font-size:11px;color:var(--green);font-family:'DM Mono',monospace;margin-top:4px">LOCK</div>
+        </div>
+        <div class="money-node" style="border-color:var(--green);background:var(--green-light)">
+          <div class="money-node-label" style="color:var(--green)">Smart Contract</div>
+          <div class="money-node-value" style="color:var(--green)">$330,000</div>
+          <div style="font-size:11px;color:var(--green);margin-top:2px;font-family:'DM Mono',monospace">ESCROWED ✓</div>
+        </div>
+        <div class="money-arrow" style="flex:0.4">
+          <div class="flow-line" style="height:3px;border-radius:2px;margin:0;background:var(--border)"></div>
+          <div style="text-align:center;font-size:11px;color:var(--muted);font-family:'DM Mono',monospace;margin-top:4px">PENDING</div>
+        </div>
+        <div class="money-node">
+          <div class="money-node-label">TanakaTech</div>
+          <div class="money-node-value" style="color:var(--muted)">$0</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;font-family:'DM Mono',monospace">AWAITING</div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card" style="border-color:var(--green);background:var(--green-light)">
+          <div class="info-card-label" style="color:var(--green)">Escrowed Amount</div>
+          <div class="info-card-value big green">$330,000</div>
+          <div class="info-card-sub">Locked at est. rate</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Transaction</div>
+          <div class="info-card-value" style="font-family:'DM Mono',monospace;font-size:13px">0xa3f9...4c21</div>
+          <div class="info-card-sub">Block #4,721,094</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Contract Balance</div>
+          <div class="info-card-value big">$330,000</div>
+          <div class="info-card-sub">Held in escrow</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Status</div>
+          <div class="info-card-value" style="color:var(--green)">FUNDED ✓</div>
+          <div class="info-card-sub">Awaiting shipment</div>
+        </div>
+      </div>
+
+      <div style="background:var(--green-light);border:1px solid rgba(22,163,74,0.2);border-radius:var(--radius);padding:14px 18px;font-size:13px;color:var(--green)">
+        <strong>✓ Escrow secured.</strong> TanakaTech can now safely ship the goods — they're guaranteed payment if delivery is confirmed and the rate is within tolerance.
+      </div>
+    </div>
+  `,
+
+  // Step 2: Ship Goods
+  () => `
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--amber-light);color:var(--amber);display:flex;align-items:center;justify-content:center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:17px">Goods Shipped</div>
+          <div style="font-size:13px;color:var(--muted)">Exporter submits bill of lading proof on-chain</div>
+        </div>
+      </div>
+
+      <div class="shipping-doc mb-4">
+        <div class="doc-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:15px;margin-bottom:4px">Bill of Lading — TT-2024-0311</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+            <span class="tag tag-blue">MAERSK OSAKA</span>
+            <span class="tag tag-amber">VESSEL: MSC KALAMATA</span>
+            <span class="tag tag-green">ETD: MAR 12</span>
+          </div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted)">
+            Hash: sha256:e3b0c442...8d5152f1<br/>
+            Container: MRKU-7291384 · 14 pallets · 2,800 kg
+          </div>
+        </div>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-card">
+          <div class="info-card-label">Port of Origin</div>
+          <div class="info-card-value">Osaka, Japan</div>
+          <div class="info-card-sub">Osaka South Port</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Port of Destination</div>
+          <div class="info-card-value">Los Angeles, USA</div>
+          <div class="info-card-sub">Port of LA — Pier 400</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Est. Arrival</div>
+          <div class="info-card-value">Mar 26, 2024</div>
+          <div class="info-card-sub">14 days transit</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Tracking</div>
+          <div class="info-card-value" style="font-family:'DM Mono',monospace;font-size:13px">MAEU-7838291</div>
+          <div class="info-card-sub" style="color:var(--green)">● In transit</div>
+        </div>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px">
+        <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Shipment Timeline</div>
+        <div style="display:flex;gap:0;align-items:center">
+          <div style="text-align:center;flex:1">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--dark);margin:0 auto 4px"></div>
+            <div style="font-size:11px;font-weight:700">Mar 11</div>
+            <div style="font-size:10px;color:var(--muted)">Departed</div>
+          </div>
+          <div style="flex:1;height:2px;background:var(--amber);position:relative;overflow:hidden">
+            <div style="position:absolute;top:-1px;left:0;height:4px;width:60%;background:linear-gradient(90deg,var(--amber),rgba(217,119,6,0.2));animation:flowAnim 2s linear infinite;border-radius:2px"></div>
+          </div>
+          <div style="text-align:center;flex:1">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--amber);margin:0 auto 4px;animation:pulse 1s infinite"></div>
+            <div style="font-size:11px;font-weight:700">Mar 18</div>
+            <div style="font-size:10px;color:var(--muted)">Pacific</div>
+          </div>
+          <div style="flex:1;height:2px;background:var(--border)"></div>
+          <div style="text-align:center;flex:1">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--border);margin:0 auto 4px"></div>
+            <div style="font-size:11px;font-weight:700">Mar 26</div>
+            <div style="font-size:10px;color:var(--muted)">Los Angeles</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `,
+
+  // Step 3: Confirm Delivery
+  () => `
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--blue-light);color:var(--blue);display:flex;align-items:center;justify-content:center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:17px">Delivery Confirmed</div>
+          <div style="font-size:13px;color:var(--muted)">Importer receives goods and confirms on-chain — triggering AI settlement</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px">
+        <div style="background:var(--green-light);border:1px solid rgba(22,163,74,0.2);border-radius:var(--radius);padding:20px;text-align:center">
+          <div style="font-size:40px;margin-bottom:8px">✅</div>
+          <div style="font-weight:700;font-size:15px;color:var(--green)">Goods Received</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Mar 26, 2024 · 14:23 PST</div>
+          <div style="font-size:12px;color:var(--muted)">Port of LA Warehouse 7</div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);text-transform:uppercase;margin-bottom:10px">Inspection Report</div>
+          <div style="display:flex;flex-direction:column;gap:6px">
+            <div style="display:flex;justify-content:space-between;font-size:13px">
+              <span style="color:var(--muted)">Units received</span><span class="bold">3,500 / 3,500</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px">
+              <span style="color:var(--muted)">Condition</span><span style="color:var(--green);font-weight:600">Good ✓</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px">
+              <span style="color:var(--muted)">HS Code match</span><span style="color:var(--green);font-weight:600">8542.31 ✓</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:13px">
+              <span style="color:var(--muted)">Serial verified</span><span style="color:var(--green);font-weight:600">Yes ✓</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--dark);border-radius:var(--radius);padding:18px 22px;margin-bottom:16px">
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:#74706c;margin-bottom:8px">→ Importer calls confirm_delivery()</div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;color:#86efac">✓ Transaction 0x8b2e...c9a1 confirmed</div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:#74706c;margin-top:6px">
+          status: "SHIPPED" → "DELIVERY_CONFIRMED"<br/>
+          Next: AI forex settlement triggered
+        </div>
+      </div>
+
+      <div style="background:var(--blue-light);border:1px solid rgba(37,99,235,0.2);border-radius:var(--radius);padding:14px 18px;font-size:13px;color:var(--blue)">
+        <strong>🤖 AI Settlement Initiated.</strong> GenLayer validators are now independently fetching the JPY/USD exchange rate. Consensus will be reached in seconds.
+      </div>
+    </div>
+  `,
+
+  // Step 4: AI Forex Settlement
+  () => {
+    const baseRate = 0.006623;
+    const rates = [0.006621, 0.006625, 0.006622, 0.006624, 0.006623];
+    const consensus = 0.006623;
+    const invoiceJPY = 50000000;
+    const settlementUSD = (invoiceJPY * consensus).toFixed(2);
+    const escrowedUSD = 330000;
+    const difference = (escrowedUSD - parseFloat(settlementUSD)).toFixed(2);
+
+    return `
+    <div>
+      <div class="flex items-center gap-2 mb-4">
+        <div style="width:36px;height:36px;border-radius:10px;background:var(--red-light);color:var(--red);display:flex;align-items:center;justify-content:center">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+        </div>
+        <div>
+          <div style="font-weight:700;font-size:17px">AI Forex Settlement</div>
+          <div style="font-size:13px;color:var(--muted)">5 GenLayer validators independently fetch and agree on the rate</div>
+        </div>
+      </div>
+
+      <div class="validators-grid mb-4">
+        ${['Alpha','Beta','Gamma','Delta','Epsilon'].map((name, i) => `
+          <div class="validator-card">
+            <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:8px">
+              <span class="validator-status v-done"></span>
+              <span class="validator-name">V${i+1} ${name}</span>
+            </div>
+            <div class="validator-rate" id="vrate-${i}">$${rates[i]}</div>
+            <div class="validator-source">${['openexchangerates','exchangerate-api','fixer.io','currencylayer','coinbase'][i]}</div>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="rate-ticker-box" style="margin-bottom:16px">
+        <div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:#74706c;margin-bottom:4px">CONSENSUS RATE · JPY/USD</div>
+          <div style="font-family:'DM Mono',monospace;font-size:36px;font-weight:500;color:#86efac;letter-spacing:-1px" id="consensus-display">0.006623</div>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <span style="font-family:'DM Mono',monospace;font-size:12px;padding:3px 10px;border-radius:4px;background:rgba(34,197,94,0.15);color:#22c55e">● CONSENSUS REACHED</span>
+            <span style="font-family:'DM Mono',monospace;font-size:12px;padding:3px 10px;border-radius:4px;background:rgba(255,255,255,0.08);color:#74706c">5/5 VALIDATORS</span>
+          </div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:#74706c;margin-bottom:4px">TOLERANCE CHECK</div>
+          <div style="font-family:'DM Mono',monospace;font-size:14px;color:#86efac">✓ WITHIN ±50bps</div>
+          <div style="font-family:'DM Mono',monospace;font-size:11px;color:#74706c;margin-top:4px">deviation: +3.38bps</div>
+        </div>
+      </div>
+
+      <div class="settlement-box">
+        <div class="calc-row">
+          <span class="k">Invoice (JPY)</span>
+          <span class="v">¥50,000,000</span>
+        </div>
+        <div class="calc-row">
+          <span class="k">Consensus Rate</span>
+          <span class="v">× 0.006623</span>
+        </div>
+        <div class="calc-row">
+          <span class="k">Escrowed (at 0.006600)</span>
+          <span class="v">$330,000.00</span>
+        </div>
+        <div class="calc-row total">
+          <span class="k" style="color:#e5e7eb;font-size:15px">Settlement Due</span>
+          <span class="v" id="settlement-num">$331,150.00</span>
+        </div>
+        <div class="calc-row" style="border:none;padding-top:6px">
+          <span class="k">Returned to importer</span>
+          <span class="v" style="color:#74706c">−$1,150.00 ← excess</span>
+        </div>
+      </div>
+    </div>
+  `;
+  },
+
+  // Step 5: Complete
+  () => `
+    <div style="text-align:center;padding:20px 0">
+      <div class="complete-icon complete-glow">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+      </div>
+      <div class="complete-title">Deal Complete! 🎉</div>
+      <div class="complete-sub">Funds released. All parties settled. Zero disputes.</div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:500px;margin:0 auto 24px;text-align:left">
+        <div class="info-card" style="border-color:var(--green);background:var(--green-light)">
+          <div class="info-card-label" style="color:var(--green)">TanakaTech Received</div>
+          <div class="info-card-value big green">$331,150</div>
+          <div class="info-card-sub">At AI-validated rate</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Horizon Refund</div>
+          <div class="info-card-value big">$1,150</div>
+          <div class="info-card-sub">Excess escrow returned</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Final Rate</div>
+          <div class="info-card-value" style="font-family:'DM Mono',monospace">¥1 = $0.006623</div>
+          <div class="info-card-sub">AI validator consensus</div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-label">Settlement Time</div>
+          <div class="info-card-value">< 30 seconds</div>
+          <div class="info-card-sub">From delivery → payment</div>
+        </div>
+      </div>
+
+      <div style="background:var(--dark);border-radius:var(--radius);padding:18px 22px;max-width:500px;margin:0 auto;text-align:left">
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:#74706c;margin-bottom:8px">Contract final state</div>
+        <div style="font-family:'DM Mono',monospace;font-size:12px;color:#e5e7eb;line-height:1.8">
+          status: <span style="color:#86efac">"COMPLETED"</span><br/>
+          final_rate: <span style="color:#f9a8d4">0.006623</span><br/>
+          settlement_usd: <span style="color:#f9a8d4">331150.00</span><br/>
+          completed_at: <span style="color:#fbbf24">"2024-03-26T22:47:11Z"</span><br/>
+          validators: <span style="color:#fbbf24">"5/5 consensus"</span>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn-primary" onclick="restartDemo()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 .49-3.51"></path></svg>
+          Replay Demo
+        </button>
+        <a href="#smart-contract" class="btn-secondary">
+          View Smart Contract
+        </a>
+      </div>
+    </div>
+  `,
+];
+
+function renderStep(idx) {
+  const el = document.getElementById('step-content');
+  el.innerHTML = `<div class="step-panel visible">${STEP_CONTENT[idx]()}</div>`;
+  updateStepper();
+}
+
+function goToStep(idx) {
+  currentStep = Math.max(0, Math.min(STEPS.length - 1, idx));
+  renderStep(currentStep);
+}
+
+function nextStep() {
+  if (currentStep < STEPS.length - 1) {
+    currentStep++;
+    renderStep(currentStep);
+    if (currentStep === STEPS.length - 1 && isPlaying) {
+      stopPlay();
+    }
+  }
+}
+
+function prevStep() {
+  if (currentStep > 0) {
+    currentStep--;
+    renderStep(currentStep);
+  }
+}
+
+function togglePlay() {
+  if (isPlaying) stopPlay();
+  else startPlay();
+}
+
+function startPlay() {
+  isPlaying = true;
+  document.getElementById('play-icon').setAttribute('data-lucide', 'pause');
+  document.getElementById('play-label').textContent = 'Pause';
+  document.getElementById('btn-play').classList.add('active');
+  lucide.createIcons();
+  scheduleNext();
+}
+
+function stopPlay() {
+  isPlaying = false;
+  clearTimeout(playTimer);
+  document.getElementById('play-icon').setAttribute('data-lucide', 'play');
+  document.getElementById('play-label').textContent = 'Play';
+  document.getElementById('btn-play').classList.remove('active');
+  lucide.createIcons();
+}
+
+function scheduleNext() {
+  clearTimeout(playTimer);
+  if (!isPlaying) return;
+  const delay = currentStep === 4 ? 5000 : 3000; // longer on AI step
+  playTimer = setTimeout(() => {
+    if (currentStep < STEPS.length - 1) {
+      nextStep();
+      scheduleNext();
+    } else {
+      stopPlay();
+    }
+  }, delay);
+}
+
+function restartDemo() {
+  stopPlay();
+  currentStep = 0;
+  renderStep(0);
+  setTimeout(startPlay, 800);
+}
+
+// ─── FOREX RATE TICKER ───
+let liveRate = 0.006623;
+let rateDir = 1;
+let rateAnimFrame = null;
+
+function animateLiveRate() {
+  // Subtle random walk
+  const delta = (Math.random() - 0.498) * 0.000003;
+  liveRate += delta;
+  liveRate = Math.max(0.006560, Math.min(0.006680, liveRate));
+
+  const el = document.getElementById('live-rate');
+  const elSmall = document.getElementById('rate-small');
+  const elInv = document.getElementById('inverse-rate');
+  const changeEl = document.getElementById('ticker-change');
+  const tolActualEl = document.getElementById('tol-actual-val');
+
+  if (el) el.textContent = liveRate.toFixed(6);
+  if (elSmall) elSmall.textContent = liveRate.toFixed(6);
+  if (elInv) elInv.textContent = (1 / liveRate).toFixed(2);
+
+  const estimated = 0.006600;
+  const change = liveRate - estimated;
+  const pct = (change / estimated * 100).toFixed(3);
+  const sign = change >= 0 ? '+' : '';
+  if (changeEl) {
+    changeEl.textContent = `${change >= 0 ? '▲' : '▼'} ${sign}${change.toFixed(6)} (${sign}${pct}%)`;
+    changeEl.className = 'ticker-change ' + (change >= 0 ? 'ticker-up' : 'ticker-down');
+  }
+  if (tolActualEl) tolActualEl.textContent = liveRate.toFixed(6);
+
+  // Update tolerance marker
+  const tolEl = document.getElementById('tol-actual');
+  if (tolEl) {
+    // Range: 0.006555 to 0.006645
+    const rangeMin = 0.006555, rangeMax = 0.006645;
+    const pctPos = ((liveRate - rangeMin) / (rangeMax - rangeMin)) * 100;
+    tolEl.style.left = Math.max(2, Math.min(97, pctPos)) + '%';
+  }
+
+  // Tolerance badge
+  const tolBadge = document.getElementById('tol-badge');
+  if (tolBadge) {
+    const withinTol = Math.abs(liveRate - estimated) / estimated <= 0.005;
+    tolBadge.className = 'tolerance-badge ' + (withinTol ? 'tolerance-ok' : 'tolerance-fail');
+    tolBadge.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ${withinTol ? 'Within Tolerance' : 'Outside Tolerance'}`;
+  }
+
+  rateAnimFrame = setTimeout(animateLiveRate, 400 + Math.random() * 300);
+}
+
+// ─── MINI RATE CHART ───
+function drawRateChart() {
+  const canvas = document.getElementById('rate-chart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const W = canvas.offsetWidth * (window.devicePixelRatio || 1);
+  const H = 80 * (window.devicePixelRatio || 1);
+  canvas.width = W;
+  canvas.height = H;
+
+  // Generate 24h data
+  const points = 48;
+  const data = [];
+  let r = 0.006580;
+  for (let i = 0; i < points; i++) {
+    r += (Math.random() - 0.498) * 0.000015;
+    r = Math.max(0.006520, Math.min(0.006700, r));
+    data.push(r);
+  }
+
+  const minV = Math.min(...data);
+  const maxV = Math.max(...data);
+  const pad = 8;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Gradient fill
+  const grad = ctx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, 'rgba(22,163,74,0.15)');
+  grad.addColorStop(1, 'rgba(22,163,74,0)');
+
+  ctx.beginPath();
+  data.forEach((v, i) => {
+    const x = pad + (i / (points - 1)) * (W - pad * 2);
+    const y = H - pad - ((v - minV) / (maxV - minV)) * (H - pad * 2);
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = '#16a34a';
+  ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
+  ctx.lineJoin = 'round';
+  ctx.stroke();
+
+  // Fill
+  ctx.lineTo(pad + (W - pad * 2), H);
+  ctx.lineTo(pad, H);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+}
+
+// ─── INIT ───
+buildStepper();
+renderStep(0);
+setTimeout(startPlay, 1500);
+animateLiveRate();
+setTimeout(drawRateChart, 200);
+
+window.addEventListener('resize', () => {
+  setTimeout(drawRateChart, 100);
+});
+
+</script>
+</body>
+</html>
